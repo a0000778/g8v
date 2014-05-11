@@ -1,3 +1,6 @@
+/*
+全域函數庫 - DOM函式庫(片段) by a0000778
+*/
 function $(select){
 	return arguments.length? document.getElementById(select):document.body;
 }
