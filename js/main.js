@@ -72,6 +72,11 @@ var g8v={
 			obj.value[4]=this.posY;
 			g8v.updateShareUrl();
 		});
+		vw.on('resize',function(){
+			obj.value[5]=this.width;
+			obj.value[6]=this.height;
+			g8v.updateShareUrl();
+		});
 		vw.on('close',function(){
 			this.objList.splice(objId);
 		}.bind(this));
