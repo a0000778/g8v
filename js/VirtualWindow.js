@@ -4,10 +4,10 @@ VirtualWindow 虛擬視窗 v0.1 by a0000778
 function VirtualWindow(id,top,left,width,height){
 	this.obj=$(id);
 	if(!this.obj) return;
-	this.width=width? width:this.obj.clientWidth;
-	this.height=height? height:this.obj.clientHeight;
-	this.posX=left;
-	this.posY=top;
+	this.width=0;
+	this.height=0;
+	this.posX=0;
+	this.posY=0;
 	this.barDownX=null;
 	this.barDownY=null;
 	this.resizeWidth={'mode':false,'pos':null};
@@ -25,7 +25,7 @@ function VirtualWindow(id,top,left,width,height){
 	this.obj.style.position='absolute';
 	this.obj.style.zIndex=VirtualWindow.topZIndex++;
 	this.moveTo(left,top);
-	this.resize(width,height);
+	this.resize(width? parseInt(width):this.obj.clientWidth,height? parseInt(height):this.obj.clientHeight);
 
 	this.obj.addEventListener('mousedown',this.resizeStart.bind(this));
 	this.obj.addEventListener('mouseup',this.resizeEnd.bind(this));
@@ -61,17 +61,17 @@ VirtualWindow.prototype.trigger=function(eventName,args){
 	},this);
 }
 VirtualWindow.prototype.moveTo=function(x,y){
-	this.posX=x;
-	this.posY=y;
-	this.obj.style.left=x+'px';
-	this.obj.style.top=y+'px';
+	this.posX=parseInt(x);
+	this.posY=parseInt(y);
+	this.obj.style.left=this.posX+'px';
+	this.obj.style.top=this.posY+'px';
 	this.trigger('move');
 }
 VirtualWindow.prototype.resize=function(width,height){
-	this.width=width;
-	this.height=height;
-	this.obj.style.width=width+'px';
-	this.obj.style.height=height+'px';
+	this.width=parseInt(width);
+	this.height=parseInt(height);
+	this.obj.style.width=this.width+'px';
+	this.obj.style.height=this.height+'px';
 	this.trigger('resize');
 }
 VirtualWindow.prototype.disableSelect=function(e){
@@ -80,14 +80,16 @@ VirtualWindow.prototype.disableSelect=function(e){
 VirtualWindow.prototype.dragStart=function(e){
 	e.stopPropagation();
 	this.toTop();
-	this.barDownX=e.layerX;
-	this.barDownY=e.layerY;
+	this.barDownX=e.clientX;
+	this.barDownY=e.clientY;
 	document.addEventListener('selectstart',this.disableSelect,true);
 	document.addEventListener('mousemove',this.dragMove);
 }
 VirtualWindow.prototype.dragMove=function(e){
 	e.stopPropagation();
-	this.moveTo(e.clientX-this.barDownX,e.clientY-this.barDownY);
+	this.moveTo(this.posX+e.clientX-this.barDownX,this.posY+e.clientY-this.barDownY);
+	this.barDownX=e.clientX;
+	this.barDownY=e.clientY;
 }
 VirtualWindow.prototype.dragEnd=function(e){
 	e.stopPropagation();
