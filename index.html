@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+	<meta charset="utf-8">
+	<title>實況</title>
+	<script src="js/common.js"></script>
+	<script src="js/VirtualWindow.js"></script>
+	<script src="js/main.js"></script>
+	<style>
+	body{
+		margin: 0px;
+	}
+	iframe{
+		border: 0px
+	}
+	.window{
+		background-color: #FFF;
+		overflow: hidden;
+		margin: 5px;
+	}
+	.window:hover{
+		margin: 0px;
+		border: 1px solid #000;
+		padding: 4px;
+	}
+	.window > .vw_bar{
+		background-color: #DDD;
+		display: none;
+	}
+	.window:hover > .vw_bar{
+		display: block;
+		position: absolute;
+		top: 5px;
+		left: 5px;
+		right: 5px;
+	}
+	#setting_window > .vw_bar{
+		display: block;
+		position: static;
+	}
+	.window > .vw_close,.window > .vw_hide{
+		position: absolute;
+		right: 5px;
+		top: 5px;
+		display: none;
+	}
+	.window:hover > .vw_close,.window:hover > .vw_hide{
+		display: block;
+	}
+	.vw_close{
+		float: right;
+	}
+	</style>
+</head>
+<body>
+	<span id="setting">選項</span>
+	<div id="setting_window" class="window" style="display: none;">
+		<div class="vw_bar">選項</div>
+		<div class="vw_hide">X</div>
+		<form id="setting_createVideo">
+			新增畫面：
+			<input type="input" name="url">
+			<input type="submit" value="新增">
+		</form>
+		<form id="setting_createChat">
+			新增聊天：
+			<input type="input" name="url">
+			<input type="submit" value="新增">
+		</form>
+		分享：
+		<input type="input" id="seting_url" readonly>
+	</div>
+</body>
+</html>
