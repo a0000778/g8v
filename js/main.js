@@ -119,17 +119,44 @@ var g8v={
 		this.updateShareUrl();
 		return true;
 	},
+	'createIFrame': function(url,title,left,top,width,height){
+		var obj={
+			'type': 'iframe',
+			'value': [
+				url,
+				title,
+				left? left:0,
+				top? top:0,
+				width? width:400,
+				height? height:600
+			]
+		};
+		this._createWindow(obj,this.objList.push(obj)-1,title,$.tag('iframe',{
+			'src': url,
+			'style': {
+				'width': '100%',
+				'height': '100%',
+				'background': '#FFF'
+			}
+		}));
+		this.updateShareUrl();
+	},
 	'updateBackground': function(data){
-		if(/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/){
+		if(/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/.test(data)){
 			$().style.background=data;
 		}else{
 			$().style.background='url('+data+')';
 		}
+		this.objList.push({
+			'type': 'bg',
+			'value': [data]
+		});
+		this.updateShareUrl();
 	},
 	'updateShareUrl': function(){
 		$('seting_url').value=location.href.substring(0,location.href.indexOf('#'))+'#'+this.objList.reduce(function(r,v){
 			return r+(r.length? '&':'')+v.type+'='+v.value.reduce(function(r,v){
-				return r+(r.length? ':':'')+v;
+				return r+(r.length? '|':'')+encodeURIComponent(v);
 			},'');
 		},'');
 	}
@@ -154,21 +181,41 @@ addEventListener('load',function(){
 		e.target.querySelector('[name=url]').value='';
 		if(!g8v.createChat(url[3],url[5],url[3])) alert('網址格式錯誤或不支援的格式！');
 	});
+	$('setting_createIFrame').addEventListener('submit',function(e){
+		e.preventDefault();
+		g8v.createIFrame(e.target.querySelector('[name=url]').value,'頁面');
+		e.target.querySelector('[name=url]').value='';
+	});
+	$('setting_updateBackground').addEventListener('submit',function(e){
+		e.preventDefault();
+		g8v.updateBackground(e.target.querySelector('[name=data]').value);
+		e.target.querySelector('[name=data]').value='';
+	});
 	//網址格式
 	location.hash.substring(1,location.hash.length).split('&').reduce(function(r,v){
 		var s=v.indexOf('=');
 		r.push({
 			'type': v.substring(0,s),
-			'value': v.substring(s+1,v.length).split(':')
+			'value': v.substring(s+1,v.length).split('|').reduce(function(r,v,k,o){
+				o[k]=decodeURIComponent(v);
+				return o;
+			})
 		});
 		return r;
 	},[]).forEach(function(data){
+		console.log('[load]type='+data.type+',value='+data.value.toString())
 		switch(data.type){
 			case 'video':
-				if(!this.createVideo.apply(this,data.value)) alert('網址格式錯誤或不支援的格式！')
+				if(!this.createVideo.apply(this,data.value)) alert('網址格式錯誤或不支援的格式！');
 			break;
 			case 'chat':
 				if(!this.createChat.apply(this,data.value)) alert('網址格式錯誤或不支援的格式！');
+			break;
+			case 'iframe':
+				this.createIFrame.apply(this,data.value);
+			break;
+			case 'bg':
+				this.updateBackground.apply(this,data.value);
 			break;
 		}
 	},g8v);
