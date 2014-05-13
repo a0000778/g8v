@@ -177,7 +177,7 @@ addEventListener('load',function(){
 	});
 	$('setting_createChat').addEventListener('submit',function(e){
 		e.preventDefault();
-		var url=e.target.querySelector('[name=url]').value.match(/^(http(s)?:\/\/)?[a-zA-Z0-9-]*\.([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/.+)/);
+		var url=e.target.querySelector('[name=url]').value.match(/^(http(s)?:\/\/)?[a-zA-Z0-9-]*\.([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/(.+)/);
 		e.target.querySelector('[name=url]').value='';
 		if(!g8v.createChat(url[3],url[5],url[3])) alert('網址格式錯誤或不支援的格式！');
 	});
