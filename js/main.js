@@ -21,6 +21,33 @@ var g8v={
 			';
 			return content;
 		},
+		'ustream': function(path){
+			if(path.indexOf('recorded')===0){
+				return $.tag('iframe',{
+					'src': 'http://www.ustream.tv/embed/recorded/'+path.match(/^recorded\/(\d+)/)[1]+'?v=3&wmode=direct&autoplay=1',
+					'style': {
+						'width': '100%',
+						'height': '100%'
+					}
+				});
+			}
+			var tag=$.tag('iframe',{
+				'src': 'data:text/html,Loading...',
+				'style': {
+					'width': '100%',
+					'height': '100%',
+					'background': '#FFF'
+				}
+			});
+			new Ajax('POST','http://api.a0000778.idv.biz/g8v/getsourceid.php',{
+				'source': 'ustream',
+				'path': path.match(/^(channel\/)?[a-zA-Z0-9-]+/)[0]
+			}).on('load',function(){
+				console.log('load');
+				tag.src=this.result()? 'http://www.ustream.tv/embed/'+this.result()+'?v=3&wmode=direct&autoplay=1':'data:text/html,Load Failed.';
+			}).send();
+			return tag;
+		},
 		'youtube': function(path){
 			var id=path.match(/(\?|&)v=([a-zA-Z0-9_-]+)/)[2];
 			return $.tag('iframe',{
@@ -43,6 +70,34 @@ var g8v={
 					'height': '100%'
 				}
 			})
+		},
+		'ustream': function(path){
+			if(!/^(channel\/)?[a-zA-Z0-9-]+/.test(path)){
+				return $.tag(('iframe',{
+					'src': 'data:text/html,not support',
+					'style': {
+						'width': '100%',
+						'height': '100%',
+						'background': '#FFF'
+					}
+				});
+			}
+			var tag=$.tag('iframe',{
+				'src': 'data:text/html,Loading...',
+				'style': {
+					'width': '100%',
+					'height': '100%',
+					'background': '#FFF'
+				}
+			});
+			new Ajax('POST','http://api.a0000778.idv.biz/g8v/getsourceid.php',{
+				'source': 'ustream',
+				'path': path.match(/^(channel\/)?[a-zA-Z0-9-]+/)[0]
+			}).on('load',function(){
+				console.log('load');
+				tag.src=this.result()? 'http://www.ustream.tv/socialstream/'+this.result()+'?siteMode=1?activeTab=socialStream&hideVideoTab=1&colorScheme=light&v=6':'data:text/html,Load Failed.';
+			}).send();
+			return tag;
 		},
 		'youtube': function(path){
 			
