@@ -73,7 +73,7 @@ var g8v={
 		},
 		'ustream': function(path){
 			if(!/^(channel\/)?[a-zA-Z0-9-]+/.test(path)){
-				return $.tag(('iframe',{
+				return $.tag('iframe',{
 					'src': 'data:text/html,not support',
 					'style': {
 						'width': '100%',
