@@ -50,7 +50,7 @@ function Ajax(method, url, data, option){
 			'user': option.auth.hasOwnProperty('user')? option.auth.user:null,
 			'pass': option.auth.hasOwnProperty('pass')? option.auth.pass:null
 		}:{},
-		'formData': option.hasOwnProperty('formData')? formData:true
+		'formData': option.hasOwnProperty('formData')? option.formData:true
 	};
 }
 Ajax.prototype.setHeader=function(header,value){
