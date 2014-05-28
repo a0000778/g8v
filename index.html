@@ -33,17 +33,14 @@
 		left: 5px;
 		right: 5px;
 	}
-	.window > .vw_close,.window > .vw_hide{
+	.window > .vw_option{
 		position: absolute;
 		right: 5px;
 		top: 5px;
 		display: none;
 	}
-	.window:hover > .vw_close,.window:hover > .vw_hide{
+	.window:hover > .vw_option{
 		display: block;
-	}
-	.vw_close{
-		float: right;
 	}
 	#setting_window{
 		background-color: #FFF;
@@ -58,7 +55,10 @@
 	<span id="setting">選項</span>
 	<div id="setting_window" class="window">
 		<div class="vw_bar">選項</div>
-		<div class="vw_hide">X</div>
+		<div class="vw_option">
+			<span class="vw_opacity">透</span>
+			<span class="vw_hide">X</span>
+		</div>
 		<form id="setting_createVideo">
 			新增畫面：
 			<input type="input" name="url">

@@ -34,7 +34,16 @@ function VirtualWindow(id,top,left,width,height){
 	bar.addEventListener('mousedown',this.dragStart.bind(this));
 	bar.addEventListener('mouseup',this.dragEnd.bind(this));
 	this.obj.querySelectorAll('.vw_close,.vw_hide').forEach(function(o){
-		o.addEventListener('click',this.close.bind(this,(o.className.indexOf('vw_close')>=0)));
+		o.addEventListener('click',function(close,e){
+			e.stopPropagation();
+			this.close(close);
+		}.bind(this,(o.className.indexOf('vw_close')>=0)));
+	},this);
+	this.obj.querySelectorAll('.vw_opacity').forEach(function(o){
+		o.addEventListener('click',function(e){
+			e.stopPropagation();
+			this.opacity();
+		}.bind(this));
 	},this);
 }
 VirtualWindow.topZIndex=0;
@@ -49,6 +58,17 @@ VirtualWindow.prototype.close=function(del){
 	if(del) this.obj.$del();
 	else this.obj.style.display='none';
 	this.trigger('close');
+}
+VirtualWindow.prototype.opacity=function(value){
+	if(value!==undefined){
+		this.obj.style.opacity=value.toString();
+	}else{
+		var opacity=parseFloat(this.obj.style.opacity || '1',10);
+		if(opacity>=1) this.obj.style.opacity='0.7';
+		else if(opacity>=0.7) this.obj.style.opacity='0.4';
+		else if(opacity>=0.4) this.obj.style.opacity='0.1';
+		else this.obj.style.opacity='1';
+	}
 }
 VirtualWindow.prototype.on=function(eventName,func){
 	if(!this.event[eventName]) return false;

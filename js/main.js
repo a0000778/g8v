@@ -111,10 +111,19 @@ var g8v={
 		}).$add('div',{
 			'className': 'vw_bar',
 			'textContent': title
-		},null,true).$add('div',{
-			'className': 'vw_close',
-			'textContent': 'X'
-		},null,true).$add(content);
+		},null,true).$add(
+			$.tag('div',{
+				'className': 'vw_option'
+			})
+			.$add('span',{
+				'className': 'vw_opacity',
+				'textContent': '透'
+			},null,true)
+			.$add('span',{
+				'className': 'vw_close',
+				'textContent': 'X'
+			},null,true)
+		,null,true).$add(content);
 		var vw=new VirtualWindow(
 			'window_'+this.windowList.length,
 			obj.value[4],
