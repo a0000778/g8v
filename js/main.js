@@ -260,10 +260,10 @@ addEventListener('load',function(){
 		var s=v.indexOf('=');
 		r.push({
 			'type': v.substring(0,s),
-			'value': v.substring(s+1,v.length).split('|').reduce(function(r,v,k,o){
-				o[k]=decodeURIComponent(v);
-				return o;
-			})
+			'value': v.substring(s+1,v.length).split('|').reduce(function(r,v){
+				r.push(decodeURIComponent(v));
+				return r;
+			},[])
 		});
 		return r;
 	},[]).forEach(function(data){
