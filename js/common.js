@@ -26,6 +26,11 @@ HTMLElement.prototype.$del=function (returnParent){
 	this.parentNode.removeChild(this);
 	return (returnParent? this.parentNode:this);
 }
+HTMLElement.prototype.$replace=function(){
+	var ele=('string'===typeof arguments[0]? $.tag(arguments.shift(),arguments.shift()):arguments.shift());
+	this.parentNode.replaceChild(ele,this);
+	return (arguments[0]? this.parentNode:this);
+}
 HTMLElement.prototype.$attr=function(key, value){
 	if(key.charAt(0)!='-'){
 		if(arguments.length==1) return this.getAttribute(key);
@@ -37,6 +42,20 @@ HTMLElement.prototype.$attr=function(key, value){
 if(!HTMLCollection.prototype.forEach) HTMLCollection.prototype.forEach=Array.prototype.forEach;
 if(!NamedNodeMap.prototype.forEach) NamedNodeMap.prototype.forEach=Array.prototype.forEach;
 if(!NodeList.prototype.forEach) NodeList.prototype.forEach=Array.prototype.forEach;
+
+function randstr(len,type){
+	var re='';
+	var str='';
+	var type=type? type:7;
+	if(type &  1) str+='0123456789';
+	if(type &  2) str+='abcdefghijklmnopqrstuvwxyz';
+	if(type &  4) str+='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	if(type &  8) str+='`~!@#$%^&*()-=_+[]{};\':",.\\/<>?';
+	if(type & 16) str+=' ';
+	while(re.length<len)
+		re+=str.charAt(Math.floor(Math.random()*str.length));
+	return re;
+}
 
 function Ajax(method, url, data, option){
 	this.xhr=new XMLHttpRequest();

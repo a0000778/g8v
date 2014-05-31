@@ -21,6 +21,33 @@ var g8v={
 			';
 			return content;
 		},
+		'livehouse': function(path){
+			var id=path.match(/^channel\/([a-zA-Z0-9_-]+)/)[0];
+			var content=$.tag('iframe',{'id':randstr(8,7),'src':'data:text/html,Loading...'});
+			content.addEventListener('load',function(e){
+				var id=e.target.id
+				var player=jwplayer(id).setup({
+					'playlist': [
+						{
+							'file':'http://wrtctw-rtcp-tw-1.livehouse.in/'+id+'/video/playlist.m3u8',
+							'provider':'plugin/jwplayer_hls/HLSProvider6.swf',
+							'type':'hls'
+						}
+					],
+					'primary': 'flash',
+					'autostart': true,
+					'width': '100%',
+					'height': '100%'
+				})
+				player.onReady(function(){
+					$(id+'_wrapper').style.position='static';
+				});
+				player.onSetupError(function(){
+					$(id+'_wrapper').$replace(document.createTextNode('Load Fail.'));
+				})
+			});
+			return content;
+		},
 		'ustream': function(path){
 			if(path.indexOf('recorded')===0){
 				return $.tag('iframe',{
@@ -235,15 +262,15 @@ addEventListener('load',function(){
 	});
 	$('setting_createVideo').addEventListener('submit',function(e){
 		e.preventDefault();
-		var url=e.target.querySelector('[name=url]').value.match(/^(http(s)?:\/\/)?[a-zA-Z0-9-]*\.([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/(.+)/);
+		var url=e.target.querySelector('[name=url]').value.match(/^(http(s)?:\/\/)?([a-zA-Z0-9-]+\.)?([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/(.+)/);
 		e.target.querySelector('[name=url]').value='';
-		if(!g8v.createVideo(url[3],url[5],url[3])) alert('網址格式錯誤或不支援的格式！');
+		if(!g8v.createVideo(url[4],url[6],url[4])) alert('網址格式錯誤或不支援的格式！');
 	});
 	$('setting_createChat').addEventListener('submit',function(e){
 		e.preventDefault();
-		var url=e.target.querySelector('[name=url]').value.match(/^(http(s)?:\/\/)?[a-zA-Z0-9-]*\.([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/(.+)/);
+		var url=e.target.querySelector('[name=url]').value.match(/^(http(s)?:\/\/)?([a-zA-Z0-9-]+\.)?([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/(.+)/);
 		e.target.querySelector('[name=url]').value='';
-		if(!g8v.createChat(url[3],url[5],url[3])) alert('網址格式錯誤或不支援的格式！');
+		if(!g8v.createChat(url[4],url[6],url[4])) alert('網址格式錯誤或不支援的格式！');
 	});
 	$('setting_createIFrame').addEventListener('submit',function(e){
 		e.preventDefault();
