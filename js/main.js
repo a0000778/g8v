@@ -153,8 +153,8 @@ var g8v={
 		,null,true).$add(content);
 		var vw=new VirtualWindow(
 			'window_'+this.windowList.length,
-			obj.value[4],
 			obj.value[3],
+			obj.value[4],
 			obj.value[5],
 			obj.value[6]
 		);
