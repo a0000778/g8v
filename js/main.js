@@ -254,7 +254,7 @@ var g8v={
 };
 
 addEventListener('load',function(){
-	var settingWindow=new VirtualWindow('setting_window',0,0);
+	var settingWindow=new VirtualWindow('setting_window',0,0,300);
 	settingWindow.close();
 	$('setting').addEventListener('click',function(){
 		settingWindow.open();
