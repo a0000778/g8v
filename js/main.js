@@ -70,7 +70,6 @@ var g8v={
 				'source': 'ustream',
 				'path': path.match(/^(channel\/)?[a-zA-Z0-9-]+/)[0]
 			}).on('load',function(){
-				console.log('load');
 				tag.src=this.result()? 'http://www.ustream.tv/embed/'+this.result()+'?v=3&wmode=direct&autoplay=1':'data:text/html,Load Failed.';
 			}).send();
 			return tag;
@@ -153,19 +152,19 @@ var g8v={
 		,null,true).$add(content);
 		var vw=new VirtualWindow(
 			'window_'+this.windowList.length,
+			obj.value[2],
 			obj.value[3],
 			obj.value[4],
-			obj.value[5],
-			obj.value[6]
+			obj.value[5]
 		);
 		vw.on('move',function(){
-			obj.value[3]=this.posX;
-			obj.value[4]=this.posY;
+			obj.value[2]=this.posX;
+			obj.value[3]=this.posY;
 			g8v.updateShareUrl();
 		});
 		vw.on('resize',function(){
-			obj.value[5]=this.width;
-			obj.value[6]=this.height;
+			obj.value[4]=this.width;
+			obj.value[5]=this.height;
 			g8v.updateShareUrl();
 		});
 		vw.on('close',function(){
@@ -245,7 +244,7 @@ var g8v={
 		this.updateShareUrl();
 	},
 	'updateShareUrl': function(){
-		$('seting_url').value=location.href.substring(0,location.href.indexOf('#'))+'#'+this.objList.reduce(function(r,v){
+		$('seting_url').value=location.origin+location.pathname+'#'+this.objList.reduce(function(r,v){
 			return r+(r.length? '&':'')+v.type+'='+v.value.reduce(function(r,v){
 				return r+(r.length? '|':'')+encodeURIComponent(v);
 			},'');
@@ -254,7 +253,7 @@ var g8v={
 };
 
 addEventListener('load',function(){
-	var settingWindow=new VirtualWindow('setting_window',0,0);
+	var settingWindow=new VirtualWindow('setting_window',0,0,300);
 	settingWindow.close();
 	$('setting').addEventListener('click',function(){
 		settingWindow.open();

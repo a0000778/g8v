@@ -124,7 +124,7 @@ VirtualWindow.prototype.dragStart=function(e){
 }
 VirtualWindow.prototype.dragMove=function(e){
 	e.stopPropagation();
-	this.moveTo(e.clientX-this.barDownX,e.clientY-this.barDownY);
+	this.moveTo(e.clientX-this.barDownX-5,e.clientY-this.barDownY-5);
 }
 VirtualWindow.prototype.dragEnd=function(e){
 	e.stopPropagation();
