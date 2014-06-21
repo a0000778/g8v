@@ -152,19 +152,19 @@ var g8v={
 		,null,true).$add(content);
 		var vw=new VirtualWindow(
 			'window_'+this.windowList.length,
-			obj.value[2],
-			obj.value[3],
-			obj.value[4],
-			obj.value[5]
+			obj.value[obj.value.length-4],
+			obj.value[obj.value.length-3],
+			obj.value[obj.value.length-2],
+			obj.value[obj.value.length-1]
 		);
 		vw.on('move',function(){
-			obj.value[2]=this.posX;
-			obj.value[3]=this.posY;
+			obj.value[obj.value.length-4]=this.posX;
+			obj.value[obj.value.length-3]=this.posY;
 			g8v.updateShareUrl();
 		});
 		vw.on('resize',function(){
-			obj.value[4]=this.width;
-			obj.value[5]=this.height;
+			obj.value[obj.value.length-2]=this.width;
+			obj.value[obj.value.length-1]=this.height;
 			g8v.updateShareUrl();
 		});
 		vw.on('close',function(){
