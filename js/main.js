@@ -70,15 +70,17 @@ var g8v={
 				'source': 'ustream',
 				'path': path.match(/^(channel\/)?[a-zA-Z0-9-]+/)[0]
 			}).on('load',function(){
-				console.log('load');
 				tag.src=this.result()? 'http://www.ustream.tv/embed/'+this.result()+'?v=3&wmode=direct&autoplay=1':'data:text/html,Load Failed.';
+			}).on('error',function(){
+				tag.src='data:text/html,Loading...Fail'
 			}).send();
 			return tag;
 		},
 		'youtube': function(path){
-			var id=path.match(/(\?|&)v=([a-zA-Z0-9_-]+)/)[2];
+			var id=path.match(/(\?|&)v=([a-zA-Z0-9_-]+)/);
+			var list=path.match(/(\?|&)list=([a-zA-Z0-9_-]+)/);
 			return $.tag('iframe',{
-				'src': 'http://www.youtube.com/embed/'+id,
+				'src': 'http://www.youtube.com/embed/'+id[2]+(list? '?list='+list[2]:''),
 				'allowfullscreen': 'true',
 				'style': {
 					'width': '100%',
