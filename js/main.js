@@ -131,25 +131,32 @@ var g8v={
 	},
 	
 	'_createWindow': function(obj,objId,title,content){
-		$().$add('div',{
+		var titleObj=document.createTextNode(title);
+		var optObj=$.tag('div',{
+			'className': 'vw_option'
+		});
+		optObj.$add('span',{
+			'className': 'vw_opacity',
+			'textContent': '透'
+		});
+		optObj.$add('span',{
+			'className': 'vw_title',
+			'textContent': '標'
+		}).addEventListener('click',function(e){
+			obj.value[obj.value.length-5]=prompt('請輸入新標題',obj.value[obj.value.length-5]);
+			titleObj.nodeValue=obj.value[obj.value.length-5];
+			g8v.updateShareUrl();
+		});
+		optObj.$add('span',{
+			'className': 'vw_close',
+			'textContent': 'X'
+		});
+		var windowObj=$().$add('div',{
 			'id': 'window_'+this.windowList.length,
 			'className': 'window'
-		}).$add('div',{
-			'className': 'vw_bar',
-			'textContent': title
-		},null,true).$add(
-			$.tag('div',{
-				'className': 'vw_option'
-			})
-			.$add('span',{
-				'className': 'vw_opacity',
-				'textContent': '透'
-			},null,true)
-			.$add('span',{
-				'className': 'vw_close',
-				'textContent': 'X'
-			},null,true)
-		,null,true).$add(content);
+		});
+		windowObj.$add('div',{'className': 'vw_bar'}).$add(titleObj);
+		windowObj.$add(optObj,null,true).$add(content);
 		var vw=new VirtualWindow(
 			'window_'+this.windowList.length,
 			obj.value[obj.value.length-4],
