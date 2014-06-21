@@ -245,7 +245,7 @@ var g8v={
 		this.updateShareUrl();
 	},
 	'updateShareUrl': function(){
-		$('seting_url').value=location.href.substring(0,location.href.indexOf('#'))+'#'+this.objList.reduce(function(r,v){
+		$('seting_url').value=location.origin+location.pathname+'#'+this.objList.reduce(function(r,v){
 			return r+(r.length? '&':'')+v.type+'='+v.value.reduce(function(r,v){
 				return r+(r.length? '|':'')+encodeURIComponent(v);
 			},'');
