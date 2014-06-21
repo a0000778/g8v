@@ -121,7 +121,6 @@ var g8v={
 				'source': 'ustream',
 				'path': path.match(/^(channel\/)?[a-zA-Z0-9-]+/)[0]
 			}).on('load',function(){
-				console.log('load');
 				tag.src=this.result()? 'http://www.ustream.tv/socialstream/'+this.result()+'?siteMode=1?activeTab=socialStream&hideVideoTab=1&colorScheme=light&v=6':'data:text/html,Load Failed.';
 			}).send();
 			return tag;
@@ -153,19 +152,19 @@ var g8v={
 		,null,true).$add(content);
 		var vw=new VirtualWindow(
 			'window_'+this.windowList.length,
+			obj.value[2],
 			obj.value[3],
 			obj.value[4],
-			obj.value[5],
-			obj.value[6]
+			obj.value[5]
 		);
 		vw.on('move',function(){
-			obj.value[3]=this.posX;
-			obj.value[4]=this.posY;
+			obj.value[2]=this.posX;
+			obj.value[3]=this.posY;
 			g8v.updateShareUrl();
 		});
 		vw.on('resize',function(){
-			obj.value[5]=this.width;
-			obj.value[6]=this.height;
+			obj.value[4]=this.width;
+			obj.value[5]=this.height;
 			g8v.updateShareUrl();
 		});
 		vw.on('close',function(){
