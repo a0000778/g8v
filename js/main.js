@@ -288,6 +288,7 @@ addEventListener('load',function(){
 		g8v.updateBackground(e.target.querySelector('[name=data]').value);
 		e.target.querySelector('[name=data]').value='';
 	});
+	$('seting_url').addEventListener('click',function(){this.select();});
 	//網址格式
 	location.hash.substring(1,location.hash.length).split('&').reduce(function(r,v){
 		var s=v.indexOf('=');
