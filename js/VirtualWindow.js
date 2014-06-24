@@ -178,7 +178,7 @@ VirtualWindow.prototype.resizeUpdate=function(e){
 	switch(this.resizeHeight.mode){
 		case 'top':
 			newTop=e.clientY-this.resizeHeight.pos;
-			newWidth+=this.posY+this.resizeHeight.pos-e.clientY;
+			newHeight+=this.posY+this.resizeHeight.pos-e.clientY;
 		break;
 		case 'bottom': newHeight=e.clientY-this.posY-this.resizeHeight.pos;
 	}
