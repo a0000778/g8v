@@ -320,5 +320,7 @@ addEventListener('load',function(){
 			break;
 		}
 	},g8v);
+	if(!g8v.objList.length)
+		g8v.createIFrame('https://g0v.hackpad.com/ep/pad/static/JBDd9hvDt5f','使用說明',307,0,490,403);
 });
 addEventListener('hashchange',location.reload.bind(location));
