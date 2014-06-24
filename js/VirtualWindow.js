@@ -1,12 +1,12 @@
 /*
-VirtualWindow 虛擬視窗 v1.1 修改版 by a0000778
+VirtualWindow 虛擬視窗 v1.3 修改版 by a0000778
 MIT License
 */
 function VirtualWindow(obj,left,top,width,height,option){
 	this.obj=typeof obj==='string'? $(obj):obj;
 	if(!this.obj) return;
-	this.width=width? width:this.obj.clientWidth;
-	this.height=height? height:this.obj.clientHeight;
+	this.width=parseInt(width? width:this.obj.clientWidth,10);
+	this.height=parseInt(height? height:this.obj.clientHeight,10);
 	var option=option? option:{};
 	this.option={
 		'dragBarSelect': option.hasOwnProperty('dragBarSelect')? option.bar:'.vw_bar',
@@ -14,8 +14,8 @@ function VirtualWindow(obj,left,top,width,height,option){
 		'closeObjSelect': option.hasOwnProperty('closeObjSelect')? option.closeObjSelect:'.vw_close',
 		'opacityObjSelect': option.hasOwnProperty('opacityObjSelect')? option.opacityObjSelect:'.vw_opacity'
 	};
-	this.posX=left;
-	this.posY=top;
+	this.posX=parseInt(left);
+	this.posY=parseInt(top);
 	this.barDownX=null;
 	this.barDownY=null;
 	this.resizeWidth={'mode':false,'pos':null};
@@ -54,6 +54,7 @@ function VirtualWindow(obj,left,top,width,height,option){
 	},this);
 }
 VirtualWindow.topZIndex=0;
+VirtualWindow.consoleLayer=null;
 VirtualWindow.prototype.toTop=function(){
 	this.obj.style.zIndex=VirtualWindow.topZIndex++;
 	return this;
@@ -94,16 +95,16 @@ VirtualWindow.prototype.trigger=function(eventName,args){
 	return this;
 }
 VirtualWindow.prototype.moveTo=function(x,y){
-	this.posX=x;
-	this.posY=y;
+	this.posX=parseInt(x);
+	this.posY=parseInt(y);
 	this.obj.style.left=x+'px';
 	this.obj.style.top=y+'px';
 	this.trigger('move');
 	return this;
 }
 VirtualWindow.prototype.resize=function(width,height){
-	this.width=width;
-	this.height=height;
+	this.width=parseInt(width);
+	this.height=parseInt(height);
 	this.obj.style.width=width+'px';
 	this.obj.style.height=height+'px';
 	this.trigger('resize');
@@ -115,23 +116,25 @@ VirtualWindow.prototype.disableSelect=function(e){
 VirtualWindow.prototype.dragStart=function(e){
 	e.stopPropagation();
 	this.toTop();
-	this.barDownX=e.layerX;
-	this.barDownY=e.layerY;
-	$().addEventListener('selectstart',this.disableSelect);
+	this.barDownX=e.clientX-this.posX;
+	this.barDownY=e.clientY-this.posY;
+	VirtualWindow.consoleLayer.style.display='block';
+	document.addEventListener('selectstart',this.disableSelect);
 	window.addEventListener('mousemove',this.dragMove);
 	window.addEventListener('mouseup',this.dragEnd.bind(this));
 	this.trigger('dragStart');
 }
 VirtualWindow.prototype.dragMove=function(e){
 	e.stopPropagation();
-	this.moveTo(e.clientX-this.barDownX-5,e.clientY-this.barDownY-5);
+	this.moveTo(e.clientX-this.barDownX,e.clientY-this.barDownY);
 }
 VirtualWindow.prototype.dragEnd=function(e){
 	e.stopPropagation();
 	this.barDownX=null;
 	this.barDownY=null;
 	window.removeEventListener('mousemove',this.dragMove);
-	$().removeEventListener('selectstart',this.disableSelect);
+	document.removeEventListener('selectstart',this.disableSelect);
+	VirtualWindow.consoleLayer.style.display='none';
 	this.trigger('dragEnd');
 }
 VirtualWindow.prototype.resizeStart=function(e){
@@ -152,7 +155,8 @@ VirtualWindow.prototype.resizeStart=function(e){
 	}
 	if(this.resizeWidth.mode || this.resizeHeight.mode){
 		this.toTop();
-		$().addEventListener('selectstart',this.disableSelect);
+		VirtualWindow.consoleLayer.style.display='block';
+		document.addEventListener('selectstart',this.disableSelect);
 		window.addEventListener('mousemove',this.resizeUpdate);
 		window.addEventListener('mouseup',this.resizeEnd.bind(this));
 		this.trigger('resizeStart');
@@ -186,6 +190,18 @@ VirtualWindow.prototype.resizeEnd=function(e){
 	this.resizeWidth.mode=false;
 	this.resizeHeight.mode=false;
 	window.removeEventListener('mousemove',this.resizeUpdate);
-	$().removeEventListener('selectstart',this.disableSelect);
+	document.removeEventListener('selectstart',this.disableSelect);
+	VirtualWindow.consoleLayer.style.display='none';
 	this.trigger('resizeEnd');
 }
+window.addEventListener('load',function(){
+	VirtualWindow.consoleLayer=$().$add('div',{'style':{
+		'position': 'fixed',
+		'top': 0,
+		'left': 0,
+		'right': 0,
+		'bottom': 0,
+		'zIndex': 2147483647,
+		'display': 'none'
+	}})
+});
