@@ -1,6 +1,7 @@
 var g8v={
 	'windowList': [],
 	'objList': [],
+	'bigscreen': null,
 	'videoSource': {
 		'justin': function(path){
 			var id=path.match(/^[a-zA-Z0-9_-]+/)[0];
@@ -136,6 +137,14 @@ var g8v={
 		var titleObj=document.createTextNode(title);
 		var optObj=$.tag('div',{
 			'className': 'vw_option'
+		});
+		optObj.$add('span',{
+			'textContent': '大'
+		}).addEventListener('click',function(e){
+			g8v.bigscreen.content.innerHTML='';
+			g8v.bigscreen.content.$add(e.target.parentNode.parentNode.children[2].cloneNode(true));
+			g8v.bigscreen.open();
+			g8v.bigscreen.toTop();
 		});
 		optObj.$add('span',{
 			'className': 'vw_opacity',
@@ -292,6 +301,17 @@ addEventListener('load',function(){
 		e.target.querySelector('[name=data]').value='';
 	});
 	$('seting_url').addEventListener('click',function(){this.select();});
+	g8v.bigscreen=new VirtualWindow($('bigscreen_window'),0,0,800,600)
+	.close()
+	.on('close',function(){
+		g8v.bigscreen.content.innerHTML='';
+	});
+	g8v.bigscreen.content=g8v.bigscreen.obj.$add('div',{
+		'style': {
+			'width': '100%',
+			'height': '100%'
+		}
+	});
 	//網址格式
 	location.hash.substring(1,location.hash.length).split('&').reduce(function(r,v){
 		var s=v.indexOf('=');
