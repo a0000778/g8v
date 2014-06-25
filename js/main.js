@@ -69,7 +69,7 @@ var g8v={
 			});
 			new Ajax('POST','http://api.a0000778.idv.biz/g8v/getsourceid.php',{
 				'source': 'ustream',
-				'path': path.match(/^(channel\/)?[a-zA-Z0-9-]+/)[0]
+				'path': path.match(/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+/)[0]
 			}).on('load',function(){
 				tag.src=this.result()? 'http://www.ustream.tv/embed/'+this.result()+'?v=3&wmode=direct&autoplay=1':'data:text/html,Load Failed.';
 			}).on('error',function(){
@@ -102,7 +102,7 @@ var g8v={
 			})
 		},
 		'ustream': function(path){
-			if(!/^(channel\/)?[a-zA-Z0-9-]+/.test(path)){
+			if(!/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+/.test(path)){
 				return $.tag('iframe',{
 					'src': 'data:text/html,not support',
 					'style': {
@@ -122,7 +122,7 @@ var g8v={
 			});
 			new Ajax('POST','http://api.a0000778.idv.biz/g8v/getsourceid.php',{
 				'source': 'ustream',
-				'path': path.match(/^(channel\/)?[a-zA-Z0-9-]+/)[0]
+				'path': path.match(/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+/)[0]
 			}).on('load',function(){
 				tag.src=this.result()? 'http://www.ustream.tv/socialstream/'+this.result()+'?siteMode=1?activeTab=socialStream&hideVideoTab=1&colorScheme=light&v=6':'data:text/html,Load Failed.';
 			}).send();

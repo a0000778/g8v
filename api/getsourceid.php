@@ -5,7 +5,7 @@ set_time_limit(5);
 $result=false;
 switch(isset($_POST['source'])? $_POST['source']:false){
 	case 'ustream':
-		if(!(isset($_POST['path']) && preg_match('/^(channel\/)?[a-zA-Z0-9-]+$/',$_POST['path']))){
+		if(!(isset($_POST['path']) && preg_match('/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+$/',$_POST['path']))){
 			http_response_code(400);
 			break;
 		}
