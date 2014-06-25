@@ -40,7 +40,7 @@ HTMLElement.prototype.$attr=function(key, value){
 }
 
 if(!HTMLCollection.prototype.forEach) HTMLCollection.prototype.forEach=Array.prototype.forEach;
-if(!NamedNodeMap.prototype.forEach) NamedNodeMap.prototype.forEach=Array.prototype.forEach;
+if(window.NamedNodeMap && !NamedNodeMap.prototype.forEach) NamedNodeMap.prototype.forEach=Array.prototype.forEach;
 if(!NodeList.prototype.forEach) NodeList.prototype.forEach=Array.prototype.forEach;
 
 function randstr(len,type){
