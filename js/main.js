@@ -154,8 +154,10 @@ var g8v={
 			'className': 'vw_title',
 			'textContent': '標'
 		}).addEventListener('click',function(e){
-			obj.value[obj.value.length-5]=prompt('請輸入新標題',obj.value[obj.value.length-5]);
-			titleObj.nodeValue=obj.value[obj.value.length-5];
+			var newtitle=prompt('請輸入新標題',obj.value[obj.value.length-5]);
+			if(newtitle===null) return;
+			obj.value[obj.value.length-5]=newtitle
+			titleObj.nodeValue=newtitle;
 			g8v.updateShareUrl();
 		});
 		optObj.$add('span',{
