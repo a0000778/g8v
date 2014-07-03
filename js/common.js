@@ -27,9 +27,10 @@ HTMLElement.prototype.$del=function (returnParent){
 	return (returnParent? this.parentNode:this);
 }
 HTMLElement.prototype.$replace=function(){
-	var ele=('string'===typeof arguments[0]? $.tag(arguments.shift(),arguments.shift()):arguments.shift());
-	this.parentNode.replaceChild(ele,this);
-	return (arguments[0]? this.parentNode:this);
+    var at=0;
+    var ele=('string'===typeof arguments[at])? $.tag(arguments[at++],arguments[at++]):arguments[at++];
+    this.parentNode.replaceChild(ele,this);
+    return (arguments[at]? this.parentNode:this);
 }
 HTMLElement.prototype.$attr=function(key, value){
 	if(key.charAt(0)!='-'){
