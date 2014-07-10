@@ -252,6 +252,58 @@ var g8v={
 		}));
 		this.updateShareUrl();
 	},
+	'createSourceList': function(form,title,left,top,width,height){
+		var obj={
+			'type': 'sourceList',
+			'value': [
+				form,
+				title,
+				left? left:0,
+				top? top:0,
+				width? width:400,
+				height? height:600
+			]
+		};
+		var content=$.tag('div',{
+			'textContent': 'Loading...',
+			'style': {
+				'backgroundColor': '#FFF',
+				'width': '100%',
+				'height': '100%'
+			}
+		});
+		new Ajax('get','https://ethercalc.org/_/'+form+'/csv').on('load',function(){
+			content.innerHTML='';
+			content.$add(this.result().csvToArray({'rSep':'\n'}).reduce(function(r,i){
+				if(i[0].charAt(0)=='#') return r;
+				var li=$.tag('li',{'textContent':i[0]});
+				switch(i[1]){
+					case 'video':
+						var url=i[2].match(/^(http(s)?:\/\/)?([a-zA-Z0-9-]+\.)?([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/(.+)/);
+						li.addEventListener('click',function(){
+							if(!g8v.createVideo(url[4],url[6],url[4])) alert('網址格式錯誤或不支援的格式！');
+						});
+					break;
+					case 'chat':
+						var url=i[2].match(/^(http(s)?:\/\/)?([a-zA-Z0-9-]+\.)?([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/(.+)/);
+						li.addEventListener('click',function(){
+							if(!g8v.createChat(url[4],url[6],url[4])) alert('網址格式錯誤或不支援的格式！');
+						});
+					break;
+					case 'page':
+						li.addEventListener('click',function(){
+							g8v.createIFrame(i[2],'頁面');
+						});
+					break;
+					default:
+						return r;
+				}
+				return r.$add(li,null,true);
+			},$.tag('ul')));
+		}).send();
+		this._createWindow(obj,this.objList.push(obj)-1,title,content);
+		this.updateShareUrl();
+	},
 	'updateBackground': function(data){
 		if(/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/.test(data)){
 			$().style.background=data;
@@ -297,6 +349,11 @@ addEventListener('load',function(){
 		g8v.createIFrame(e.target.querySelector('[name=url]').value,'頁面');
 		e.target.querySelector('[name=url]').value='';
 	});
+	$('setting_createSourceList').addEventListener('submit',function(e){
+		e.preventDefault();
+		g8v.createSourceList(e.target.querySelector('[name=code]').value,'清單');
+		e.target.querySelector('[name=code]').value='';
+	});
 	$('setting_updateBackground').addEventListener('submit',function(e){
 		e.preventDefault();
 		g8v.updateBackground(e.target.querySelector('[name=data]').value);
@@ -336,6 +393,9 @@ addEventListener('load',function(){
 			break;
 			case 'iframe':
 				this.createIFrame.apply(this,data.value);
+			break;
+			case 'sourceList':
+				this.createSourceList.apply(this,data.value);
 			break;
 			case 'bg':
 				this.updateBackground.apply(this,data.value);
