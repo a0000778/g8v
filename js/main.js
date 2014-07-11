@@ -269,7 +269,8 @@ var g8v={
 			'style': {
 				'backgroundColor': '#FFF',
 				'width': '100%',
-				'height': '100%'
+				'height': '100%',
+				'paddingTop': '25px'
 			}
 		});
 		new Ajax('get','https://ethercalc.org/_/'+form+'/csv').on('load',function(){
