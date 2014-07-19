@@ -22,33 +22,6 @@ var g8v={
 			';
 			return content;
 		},
-		'livehouse': function(path){
-			var id=path.match(/^channel\/([a-zA-Z0-9_-]+)/)[0];
-			var content=$.tag('iframe',{'id':randstr(8,7),'src':'data:text/html,Loading...'});
-			content.addEventListener('load',function(e){
-				var id=e.target.id
-				var player=jwplayer(id).setup({
-					'playlist': [
-						{
-							'file':'http://wrtctw-rtcp-tw-1.livehouse.in/'+id+'/video/playlist.m3u8',
-							'provider':'plugin/jwplayer_hls/HLSProvider6.swf',
-							'type':'hls'
-						}
-					],
-					'primary': 'flash',
-					'autostart': true,
-					'width': '100%',
-					'height': '100%'
-				})
-				player.onReady(function(){
-					$(id+'_wrapper').style.position='static';
-				});
-				player.onSetupError(function(){
-					$(id+'_wrapper').$replace(document.createTextNode('Load Fail.'));
-				})
-			});
-			return content;
-		},
 		'ustream': function(path){
 			if(path.indexOf('recorded')===0){
 				return $.tag('iframe',{
@@ -127,9 +100,6 @@ var g8v={
 				tag.src=this.result()? 'http://www.ustream.tv/socialstream/'+this.result()+'?siteMode=1?activeTab=socialStream&hideVideoTab=1&colorScheme=light&v=6':'data:text/html,Load Failed.';
 			}).send();
 			return tag;
-		},
-		'youtube': function(path){
-			
 		}
 	},
 	
