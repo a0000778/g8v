@@ -4,23 +4,7 @@ var g8v={
 	'bigscreen': null,
 	'videoSource': {
 		'justin': function(path){
-			var id=path.match(/^[a-zA-Z0-9_-]+/)[0];
-			var content=$.tag('object',{
-				'type': 'application/x-shockwave-flash',
-				'data': 'http://www.justin.tv/swflibs/JustinPlayer.swf?channel='+id,
-				'style': {
-					'width': '100%',
-					'height': '100%'
-				}
-			});
-			content.innerHTML='\
-				<param name="allowFullScreen" value="true">\
-				<param name="allowScriptAccess" value="always">\
-				<param name="allowNetworking" value="all">\
-				<param name="movie" value="http://www.justin.tv/swflibs/JustinPlayer.swf">\
-				<param name="flashvars" value="hostname=www.justin.tv&amp;channel='+id+'&amp;auto_play=true&amp;start_volume=25">\
-			';
-			return content;
+			return document.createTextNode('justin 已關站');
 		},
 		'ustream': function(path){
 			if(path.indexOf('recorded')===0){
@@ -65,14 +49,7 @@ var g8v={
 	},
 	'chatSource': {
 		'justin': function(path){
-			var id=path.match(/^[a-zA-Z0-9_-]+/)[0];
-			return $.tag('iframe',{
-				'src': 'http://zh-tw.justin.tv/chat/embed?channel='+id+'&popout_chat=true',
-				'style': {
-					'width': '100%',
-					'height': '100%'
-				}
-			})
+			return document.createTextNode('justin 已關站');
 		},
 		'ustream': function(path){
 			if(!/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+/.test(path)){
