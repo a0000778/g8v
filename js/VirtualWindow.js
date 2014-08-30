@@ -53,7 +53,7 @@ function VirtualWindow(obj,left,top,width,height,option){
 		o.addEventListener('click',this.opacity.bind(this,undefined));
 	},this);
 }
-VirtualWindow.topZIndex=0;
+VirtualWindow.topZIndex=1000;
 VirtualWindow.consoleLayer=null;
 VirtualWindow.prototype.toTop=function(){
 	this.obj.style.zIndex=VirtualWindow.topZIndex++;

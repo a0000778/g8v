@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<title>G8V.TV 電視牆</title>
 	<script src="js/common.js"></script>
+	<script src="js/taskStep.js"></script>
 	<script src="js/VirtualWindow.js"></script>
 	<script src="plugin/csvToArray.js"></script>
 	<script src="js/main.js"></script>
@@ -57,46 +58,15 @@
 	</style>
 </head>
 <body>
-	<span id="setting">選項</span>
+	<div id="setting" style="position:absolute;top:0px;left:0px;z-index:999;">選項</div>
 	<div id="setting_window" class="window">
 		<div class="vw_bar">選項</div>
 		<div class="vw_option">
 			<span class="vw_opacity">透</span>
 			<span class="vw_hide">X</span>
 		</div>
-		<form id="setting_createVideo">
-			新增畫面：
-			<input type="input" name="url" placeholder="輸入直播瀏覽頁網址">
-			<input type="submit" value="新增">
-		</form>
-		<form id="setting_createChat">
-			新增聊天：
-			<input type="input" name="url" placeholder="輸入直播瀏覽頁網址">
-			<input type="submit" value="新增">
-		</form>
-		<form id="setting_createIFrame">
-			新增頁面：
-			<input type="input" name="url" placeholder="輸入目標頁面網址">
-			<input type="submit" value="新增">
-		</form>
-		<form id="setting_createSourceList">
-			新增來源清單：
-			<input type="input" name="code" placeholder="輸入 EtherCalc 代碼">
-			<input type="submit" value="新增">
-		</form>
-		<form id="setting_updateBackground">
-			更改背景：
-			<input type="input" name="data" placeholder="輸入背景圖片網址">
-			<input type="submit" value="更改">
-		</form>
 		分享：
 		<input type="input" id="seting_url" readonly>
-	</div>
-	<div id="bigscreen_window" class="window">
-		<div class="vw_bar">大畫面</div>
-		<div class="vw_option">
-			<span class="vw_hide">X</span>
-		</div>
 	</div>
 </body>
 </html>
