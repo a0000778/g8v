@@ -16,7 +16,6 @@
 	});
 	var bgMapLayer=$().$add('div',{
 		'style': {
-			'display': 'none',
 			'position': 'absolute',
 			'top': '0px',
 			'left': '0px',
@@ -25,20 +24,7 @@
 			'zIndex': g8v.bgLayer++
 		}
 	});
-	var bgMapView=new ol.View({
-		center: [0,0],
-		zoom: 0
-	});
-	var bgMap=new ol.Map({
-		'target': bgMapLayer,
-		'layers': [
-			new ol.layer.Tile({source: new ol.source.OSM()})
-		],
-		'view': bgMapView
-	});
-	//bgMap.on('move',function(){
-		//bgMap.getCenter();
-	//});
+	var bgMap,bgMapView;
 	
 	var controlForm=$.tag('form',{'textContent':'設定背景：'});
 	var inputBgData=controlForm.$add('input',{'type':'input','placeholder':'圖片、RGB、OSM'});
@@ -53,17 +39,33 @@
 		'load': function(data){
 			var mapArgs;
 			if(/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/.test(data)){//RGB Color
-				bgStaticLayer.style.background=data;
 				bgStaticLayer.style.display='';
 				bgMapLayer.style.display='none';
+				bgStaticLayer.style.background=data;
 			}else if(mapArgs=data.match(/^(http(s)?:\/\/)?(www\.)?openstreetmap\.org\/#map=(\d+)\/(\d+(\.\d+)?)\/(\d+(\.\d+)?)/)){//OSM
-				bg.mapMoveTo(mapArgs[7],mapArgs[5],mapArgs[4]);
 				bgStaticLayer.style.display='none';
 				bgMapLayer.style.display='';
+				if(!bgMap){//Map init
+					bgMapView=new ol.View({
+						center: transform(0,0),
+						zoom: 1
+					});
+					bgMap=new ol.Map({
+						'target': bgMapLayer,
+						'layers': [
+							new ol.layer.Tile({source: new ol.source.OSM()})
+						],
+						'view': bgMapView
+					});
+					//bgMap.on('move',function(){
+						//bgMap.getCenter();
+					//});
+				}
+				bg.mapMoveTo(mapArgs[7],mapArgs[5],mapArgs[4]);
 			}else{//img
-				bgStaticLayer.style.background='url('+data+')';
 				bgStaticLayer.style.display='';
 				bgMapLayer.style.display='none';
+				bgStaticLayer.style.background='url('+data+')';
 			}
 			if(!bgObj) g8v.createObj('bg',bgObj=[]);
 			bgObj[0]=data;
