@@ -20,7 +20,7 @@
 						'background': '#FFF'
 					}
 				});
-				new Ajax('POST','http://api.a0000778.idv.biz/g8v/getsourceid.php',{
+				new Ajax('POST','http://g8v-a0000778.rhcloud.com/getSourceId',{
 					'source': 'ustream',
 					'path': path.match(/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+/)[0]
 				}).on('load',function(){
