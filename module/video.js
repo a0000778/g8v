@@ -19,6 +19,11 @@
 						'background': '#FFF'
 					}
 				});
+				var checkIdOnly=path.match(/^(channel\/)?(\d+)/);
+				if(checkIdOnly){
+					tag.src='http://www.ustream.tv/embed/'+checkIdOnly[2]+'?v=3&wmode=direct&autoplay=1';
+					return tag;
+				}
 				new Ajax('POST','http://g8v-a0000778.rhcloud.com/getSourceId',{
 					'source': 'ustream',
 					'path': path.match(/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+/)[0]
