@@ -84,7 +84,7 @@
 					msg=JSON.parse(msg);
 					switch(msg.action){
 						case 'move':
-							bg.mapMarkMove(msg.name,msg.pos,msg.module,msg.args,true);
+							bg.mapMarkMove(msg.name,msg.pos[0],msg.pos[1],msg.module,msg.args,true);
 						break;
 						case 'delete':
 							bg.mapMarkDelete(msg.name,true);
