@@ -1,7 +1,4 @@
 (function(){
-	function transform(x,y){
-		return ol.proj.transform((y!=undefined)? [parseFloat(x,10),parseFloat(y,10)]:[parseFloat(x[0],10),parseFloat(x[1],10)],'EPSG:4326','EPSG:900913');
-	}
 	var bgObj;
 	var bgStaticLayer=$().$add('div',{
 		'style': {
@@ -14,147 +11,200 @@
 			'zIndex': g8v.bgLayer++
 		}
 	});
-	var bgMapLayer=$().$add('div',{
-		'style': {
-			'position': 'absolute',
-			'top': '0px',
-			'left': '0px',
-			'bottom': '0px',
-			'right': '0px',
-			'zIndex': g8v.bgLayer++
-		}
-	});
-	var bgMap,bgMapView,bgMapMarkSource,bgMapMarkImage,bgMapMarkList,bgMapSocket;
-	
 	
 	var bg={
 		'load': function(data){
-			var mapArgs;
-			if(bgMapSocket){
-				bgMapSocket.close();
-				bgMapSocket=undefined;
-			}
 			if(/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/.test(data)){//RGB Color
 				bgStaticLayer.style.display='';
-				bgMapLayer.style.display='none';
+				bg.mapUnload();
 				bgStaticLayer.style.background=data;
 			}else if(/^http(s)?:\/\//.test(data)){//img
 				bgStaticLayer.style.display='';
-				bgMapLayer.style.display='none';
+				bg.mapUnload();
 				bgStaticLayer.style.background='url('+data+')';
 			}else if(/^\w+$/.test(data)){//OSM
-				if(!window.WebSocket){
-					alert('你的瀏覽器過舊，不支援背景地圖功能，請更換或更新瀏覽器');
-					return;
-				}
 				bgStaticLayer.style.display='none';
-				bgMapLayer.style.display='';
-				if(!bgMap){//Map init
-					bgMapView=new ol.View({
-						center: transform(0,0),
-						zoom: 1
-					});
-					bgMapMarkSource=new ol.source.Vector();
-					bgMapMarkList={};
-					bgMapMarkImage=new ol.style.Icon({
-						anchor: [0.5, 1],
-						anchorXUnits: 'fraction',
-						anchorYUnits: 'fraction',
-						src: 'module/bg_map_pos.png'
-					});
-					this.mapMarkMove('=====立法院=====',121.52007,25.0438);
-					bgMap=new ol.Map({
-						'target': bgMapLayer,
-						'layers': [
-							new ol.layer.Tile({source: new ol.source.OSM()}),
-							new ol.layer.Vector({'source': bgMapMarkSource})
-						],
-						'view': bgMapView
-					});
-				}else{
-					alert('不支援的項目');
+				bg.mapLoad(data);
+			}
+		}
+	};
+	//bgMap
+	(function(){
+		if(!window.WebSocket){
+			alert('你的瀏覽器過舊，不支援背景地圖功能，請更換或更新瀏覽器');
+			return;
+		}
+		var transform=function(x,y){
+			return ol.proj.transform((y!=undefined)? [parseFloat(x,10),parseFloat(y,10)]:[parseFloat(x[0],10),parseFloat(x[1],10)],'EPSG:4326','EPSG:900913');
+		};
+		var socket,code;
+		var markList={};
+		var markObj=$.tag('div',{
+			'style':{
+				'backgroundColor': '#F00',
+				'borderRadius': '100%',
+				'borderColor': '#000',
+				'borderWidth': '2px',
+				'borderStyle': 'solid',
+				'width': '5px',
+				'height': '5px'
+			}
+		}).$add('div',{
+			'className': 'name',
+			'style': {
+				'position': 'relative',
+				'top': '10px',
+				'left': '-50%',
+				'fontSize': '10px',
+				'whiteSpace': 'nowrap',
+				'display': 'table-cell'
+			}
+		},null,true);
+		var bgMapLayer=$().$add('div',{
+			'style': {
+				'display': 'none',
+				'position': 'absolute',
+				'top': '0px',
+				'left': '0px',
+				'bottom': '0px',
+				'right': '0px',
+				'zIndex': g8v.bgLayer++
+			}
+		});
+		var mapView=new ol.View({
+			center: transform(0,0),
+			zoom: 1
+		});
+		var map=new ol.Map({
+			'interactions': ol.interaction.defaults().extend([new ol.interaction.Select()]),
+			'target': bgMapLayer,
+			'layers': [new ol.layer.Tile({source: new ol.source.OSM()})],
+			'view': mapView
+		});
+		bg.mapLoad=(function(){
+			var tryConnect=0;
+			var ev_message=function(e){
+				console.log(e.data);
+				var msg=JSON.parse(e.data);
+				switch(msg.action){
+					case 'move':
+						bg.mapMark(msg.name,msg.pos,msg.module,msg.args,true);
+					break;
+					case 'delete':
+						bg.mapUnMark(msg.name,true);
+					break;
+					case 'viewAll':
+						var x=[];
+						var y=[];
+						var name,pos;
+						for(name in markList){
+							pos=markList[name].pos;
+							x.push(pos[0]);
+							y.push(pos[1]);
+						}
+						var min=transform(Math.min.apply(Math,x),Math.min.apply(Math,y));
+						var max=transform(Math.max.apply(Math,x),Math.max.apply(Math,y));
+						mapView.fitExtent([min[0],min[1],max[0],max[1]],map.getSize());
+					break;
+					default:
+						console.error('[bgMap] 不支援的操作 %s,msg=%s',msg.action,JSON.stringify(msg));
+				}
+			}
+			var ev_open=function(){
+				tryConnect=0;
+			}
+			var ev_close=function(){
+				if(!code) return;
+				if(tryConnect>=3){
+					console.log('[bgMap] 無法與伺服器連線，放棄連線');
+					alert('背景地圖無法與伺服器連線，請檢查網路連線，或者目前伺服器發生異常');
 					return;
 				}
-				bgMapSocket=new WebSocket('ws://g8v-a0000778.rhcloud.com:8000/'+data,'mapPoint');
-				bgMapSocket.addEventListener('error',function(err){
-					console.error('[bgMap] Error: %s',err.toString());
-					
-				});
-				bgMapSocket.addEventListener('message',function(msg){
-					msg=JSON.parse(msg);
-					switch(msg.action){
-						case 'move':
-							bg.mapMarkMove(msg.name,msg.pos[0],msg.pos[1],msg.module,msg.args,true);
-						break;
-						case 'delete':
-							bg.mapMarkDelete(msg.name,true);
-						break;
-						default:
-							console.error('[bgMap] 不支援的操作 %s,msg=%s',msg.action,JSON.stringify(msg));
-					}
-				});
-				bgMapSocket.addEventListener('close',function(msg){
-					bgMapSocket=undefined;
-				});
-				//bg.mapMoveTo(mapArgs[7],mapArgs[5],mapArgs[4]);
-				bg.mapMoveTo(121.5215,25.0439,17)
+				if(tryConnect){
+					console.log('[bgMap] 無法與伺服器連線，嘗試次數：%d',tryConnect);
+					setTimeout(bg.mapLoad,3000,code);
+				}else{
+					console.error('[bgMap] 失去連線，3 秒後重新連線');
+					setTimeout(bg.mapLoad,3000,code);
+				}
 			}
-			if(!bgObj) g8v.createObj('bg',bgObj=[]);
-			bgObj[0]=data;
-		},
-		'mapMoveTo': function(x,y,z){
-			if(z!=null)
-				bgMapView.setZoom(parseInt(z));
-			if(x!=null && y!=null)
-				bgMapView.setCenter(transform(x,y));
-		},
-		'mapMarkMove': function(name,x,y,mod,args,formServer){
-			var mark=bgMapMarkList['p_'+name];
+			return function(data){
+				if(!/^\w+$/.test(data)) return false;
+				bg.mapUnload();
+				code=data;
+				bgMapLayer.style.display='';
+				map.updateSize();
+				//socket=new WebSocket('ws://g8v-a0000778.rhcloud.com:8000/'+data,'mapPoint');
+				tryConnect++;
+				socket=new WebSocket('ws://192.168.1.123:10080/'+code,'mapPoint');
+				socket.addEventListener('message',ev_message);
+				socket.addEventListener('open',ev_open);
+				socket.addEventListener('close',ev_close);
+				//bg.mapMark('=====立法院=====',121.52007,25.0438);
+			};
+		})();
+		bg.mapUnload=function(){
+			if(!code) return;
+			socket.close();
+			socket=undefined;
+			var k,o
+			for(k in markList){
+				o=markList[k];
+				map.removeOverlay(o.layer);
+				o.obj.$del();
+				markList[k]=undefined;
+				delete markList[k];
+			}
+			bgMapLayer.style.display='none';
+			code=null;
+		};
+		bg.mapMark=function(name,pos,mod,args,formServer){
+			var mark=markList['p_'+name];
 			if(!mark){
-				var obj=new ol.Feature();
-				obj.setStyle(new ol.style.Style({
-					'image': bgMapMarkImage,
-					'text': new ol.style.Text({
-						'font': '12px 文泉驛微米黑, 黑體-繁, 新細明體',
-						'text': name,
-						'textAlign': 'center',
-						'offsetY': 15,
-						'fill': new ol.style.Fill({'color': '#000'})
-					})
-				}));
-				obj.on('click',function(){
-					console.log('click');
+				var obj=markObj.cloneNode(true);
+				obj.querySelector('.name').textContent=name;
+				obj.addEventListener('click',function(){
+					if(!(mark.module.length && g8v.module.hasOwnProperty(mark.module))) return;
+					var mod=g8v.module[mark.module];
+					mod.load.apply(mod,mark.args);
 				});
-				bgMapMarkSource.addFeature(obj);
-				mark=bgMapMarkList['p_'+name]={
+				mark=markList['p_'+name]={
 					'name': name,
-					'pos': [x,y],
+					'pos': pos,
 					'module': mod || '',
 					'args': args || [],
+					'layer': new ol.Overlay({
+						'position': transform(pos[0],pos[1]),
+						'element': obj
+					}),
 					'obj': obj
 				};
-			}
-			if(x!=null && y!=null){
-				mark.pos=[x,y];
-				mark.obj.setGeometry(new ol.geom.Point(transform(x,y)));
-			}
-			if(mod && args){
-				mark.module=mod;
-				mark.args=args;
+				map.addOverlay(mark.layer);
+				obj=undefined;
+				delete obj;
+			}else{
+				if(pos && pos.length===2){
+					mark.pos=pos;
+					mark.layer.setPosition(transform(pos[0],pos[1]))
+				}
+				if(mod && args){
+					mark.module=mod;
+					mark.args=args;
+				}
 			}
 			if(!formServer)
-				bgMapSocket.send(JSON.stringify({
+				socket.send(JSON.stringify({
 					'action': 'move',
 					'name': name,
 					'pos': mark.pos,
 					'module': mark.mod,
 					'args': mark.args
 				}));
-		},
-		'mapMarkDelete': function(name,formServer){
-			var mark=bgMapMarkList['p_'+name];
+		};
+		bg.mapUnMark=function(name){
+			var mark=markList['p_'+name];
 			if(!mark) return;
-			bgMapMarkSource.removeFeature(mark.obj);
+			map.removeOverlay(mark.layer);
 			mark=bgMapMarkList['p_'+name]=undefined;
 			delete mark,bgMapMarkList['p_'+name];
 			if(!formServer)
@@ -162,12 +212,12 @@
 					'action': 'delete',
 					'name': name
 				}));
-		}
-	};
+		};
+	})();
 	
 	var controlForm=$.tag('form',{'textContent':'設定背景：'});
-	var inputBgData=controlForm.$add('input',{'type':'input','placeholder':'圖片、RGB、OSM'});
-	controlForm.$add('input',{'type':'submit'});
+	var inputBgData=controlForm.$add('input',{'type':'input','placeholder':'圖片、RGB、標記地圖'});
+	controlForm.$add('input',{'type':'submit','value':'設定'});
 	controlForm.addEventListener('submit',function(e){
 		e.preventDefault();
 		bg.load(inputBgData.value);
