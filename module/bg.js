@@ -25,7 +25,12 @@
 			}else if(/^\w+$/.test(data)){//OSM
 				bgStaticLayer.style.display='none';
 				bg.mapLoad(data);
-			}
+			}else return;
+			if(!bgObj)
+				bgObj=g8v.createObj('bg',[data]);
+			else
+				bgObj.args[0]=data;
+			g8v.updateShareUrl();
 		}
 	};
 	//bgMap
