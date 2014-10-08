@@ -50,10 +50,10 @@ var g8v={
 		).$add(content);
 		var vw=new VirtualWindow(
 			windowObj,
-			obj.width,
-			obj.height,
 			obj.posX,
-			obj.posY
+			obj.posY,
+			obj.width,
+			obj.height
 		);
 		vw.on('move',function(){
 			obj.posX=this.posX;
@@ -71,7 +71,7 @@ var g8v={
 		}.bind(this));
 		return vw;
 	},
-	'createObj': function(module,args,title,width,height,posX,posY){
+	'createObj': function(module,args,title,posX,posY,width,height){
 		var data={
 			'module': module,
 			'args': args
@@ -94,7 +94,7 @@ var g8v={
 				},'')+
 				(
 					(v.title && v.width && v.height && v.posX!=undefined && v.posY!=undefined)?
-					'|'+encodeURIComponent(v.title)+'|'+v.width+'|'+v.height+'|'+v.posX+'|'+v.posY:''
+					'|'+encodeURIComponent(v.title)+'|'+v.posX+'|'+v.posY+'|'+v.width+'|'+v.height:''
 				);
 		},'');
 	}
