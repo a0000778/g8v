@@ -78,10 +78,10 @@ var g8v={
 		};
 		if(title && width && height && posX!=undefined && posY!=undefined){
 			data.title=title
-			data.width=width;
-			data.height=height;
-			data.posX=posX;
-			data.posY=posY;
+			data.width=parseInt(width,10);
+			data.height=parseInt(height,10);
+			data.posX=parseInt(posX,10);
+			data.posY=parseInt(posY,10);
 		}
 		this.objList.push(data);
 		return data;
