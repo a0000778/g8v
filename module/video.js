@@ -1,6 +1,37 @@
 (function(){
 	var video={
 		'source': {
+			'twitch': function(path){
+				var id=path.match(/^([a-zA-Z0-9_-]+)/);
+				var recorded=path.match(/\/c\/(\d+)/);
+				if(recorded){
+					var content=$.tag('object',{
+						'type': 'application/x-shockwave-flash',
+						'data': 'http://www.twitch.tv/widgets/archive_embed_player.swf',
+						'style': {
+							'width': '100%',
+							'height': '100%'
+						}
+					});
+					content.innerHTML='\
+						<param name="allowFullScreen" value="true">\
+						<param name="allowScriptAccess" value="always">\
+						<param name="allowNetworking" value="all">\
+						<param name="movie" value="http://www.twitch.tv/widgets/archive_embed_player.swf">\
+						<param name="flashvars" value="channel='+id[1]+'&amp;auto_play=true&amp;chapter_id='+recorded[1]+'">\
+					';
+					return content;
+				}else{
+					return $.tag('iframe',{
+						'src': 'http://www.twitch.tv/'+id[1]+'/embed',
+						'allowfullscreen': 'true',
+						'style': {
+							'width': '100%',
+							'height': '100%'
+						}
+					});
+				}
+			},
 			'ustream': function(path){
 				if(path.indexOf('recorded')===0){
 					return $.tag('iframe',{

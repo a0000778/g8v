@@ -1,6 +1,17 @@
 (function(){
 	var chat={
 		'source': {
+			'twitch': function(path){
+				var id=path.match(/^([a-zA-Z0-9_-]+)/);
+				return $.tag('iframe',{
+					'src': 'http://www.twitch.tv/'+id[1]+'/chat',
+					'allowfullscreen': 'true',
+					'style': {
+						'width': '100%',
+						'height': '100%'
+					}
+				});
+			},
 			'ustream': function(path){
 				if(!/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+/.test(path)){
 					return $.tag('iframe',{
