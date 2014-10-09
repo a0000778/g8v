@@ -1,13 +1,9 @@
 (function(){
 	var bgObj;
 	var bgStaticLayer=$().$add('div',{
+		'className': 'mod_bg',
 		'style': {
 			'display': 'none',
-			'position': 'absolute',
-			'top': '0px',
-			'left': '0px',
-			'bottom': '0px',
-			'right': '0px',
 			'zIndex': g8v.bgLayer++
 		}
 	});
@@ -45,34 +41,14 @@
 		var socket,code;
 		var markList={};
 		var markObj=$.tag('div',{
-			'style':{
-				'backgroundColor': '#F00',
-				'borderRadius': '100%',
-				'borderColor': '#000',
-				'borderWidth': '2px',
-				'borderStyle': 'solid',
-				'width': '5px',
-				'height': '5px'
-			}
+			'className': 'mod_bg_mark'
 		}).$add('div',{
-			'className': 'name',
-			'style': {
-				'position': 'relative',
-				'top': '10px',
-				'left': '-50%',
-				'fontSize': '10px',
-				'whiteSpace': 'nowrap',
-				'display': 'table-cell'
-			}
+			'className': 'name'
 		},null,true);
 		var bgMapLayer=$().$add('div',{
+			'className': 'mod_bg',
 			'style': {
 				'display': 'none',
-				'position': 'absolute',
-				'top': '0px',
-				'left': '0px',
-				'bottom': '0px',
-				'right': '0px',
 				'zIndex': g8v.bgLayer++
 			}
 		});
@@ -229,5 +205,10 @@
 	});
 	g8v.module.config.addItem(controlForm);
 	
+	document.head.$add('link',{
+		'type': 'text/css',
+		'rel': 'stylesheet',
+		'href': (navigator.userAgent.indexOf('Firefox')!==-1)? 'module/bg_firefox.css':'module/bg.css'
+	});
 	g8v.module.bg=bg;
 })();
