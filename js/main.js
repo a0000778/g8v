@@ -69,7 +69,10 @@ var g8v={
 			this.objList.splice(this.objList.indexOf(obj));
 			g8v.updateShareUrl();
 		}.bind(this));
-		return vw;
+		obj.vw=vw;
+		vw=undefined;
+		delete vw;
+		return obj.vw;
 	},
 	'createObj': function(module,args,title,posX,posY,width,height){
 		var data={
@@ -128,6 +131,124 @@ addEventListener('load',function(){
 	})();
 	$('seting_url').addEventListener('click',function(){this.select();});
 	
+	/* Fix Overflow Window */
+	g8v.fixOverflow=(function(){
+		var vw=new VirtualWindow($('overflow_confirm'),0,0,400,300).close();
+		var select=$('overflow_action');
+		var browser=$('overflow_browser');
+		var getRange=function(){
+			return g8v.objList.reduce(function(result,obj){
+				if(obj.width && obj.height && obj.posX!=undefined && obj.posY!=undefined){
+					if(result.startX>obj.posX) result.startX=obj.posX;
+					if(result.startY>obj.posY) result.startY=obj.posY;
+					var endX=obj.posX+obj.width;
+					var endY=obj.posY+obj.height;
+					if(result.endX<endX) result.endX=endX;
+					if(result.endY<endY) result.endY=endY;
+				}
+				return result;
+			},{
+				'startX': 0,
+				'startY': 0,
+				'endX': 0,
+				'endY': 0
+			});
+		}
+		var check=function(){
+			var range=getRange();
+			if(range.endX>innerWidth || range.endY>innerHeight){
+				//推薦處理方法
+				var width=range.endX-range.startX;
+				var height=range.endY-range.startY;
+				//瀏覽器過小，放大即可解決問題
+				browser.style.display=(screen.width>=width && screen.height>=height)? '':'none';
+				if(width<=innerWidth && height<=innerHeight){
+					//自動搬移：實際區塊小於畫面大小
+					select.value='move';
+				}else if(height/width<innerHeight/innerWidth*1.2){
+					//移動到可視範圍：單螢幕顯示多螢幕來源
+					select.value='moveInDisplay';
+				}else{
+					//自動縮放：解析度問題，縮放處理
+					select.value='resize';
+				}
+				vw.open().moveTo(
+					Math.floor((innerWidth-400)/2),
+					Math.floor((innerHeight-300)/2)
+				).toTop();
+			}else{
+				vw.close();
+			}
+		}
+		return function(action){
+			if(!action){
+				check();
+				return;
+			}
+			switch(action){
+				case 'move'://自動搬移
+					var range=getRange();
+					var width=range.endX-range.startX;
+					var height=range.endY-range.startY;
+					if(width<=innerWidth && height<=innerHeight){
+						var x=range.startX-((innerWidth-width)/2);
+						var y=range.startY-((innerHeight-height)/2);
+						this.objList.forEach(function(obj){
+							if(!obj.vw) return;
+							obj.vw.moveTo(obj.posX-x,obj.posY-y);
+						});
+						delete x,y;
+					}
+					delete range,width,height;
+				break;
+				case 'moveInDisplay'://移動到可視範圍
+					var nextPosX=30;
+					var nextPosY=30;
+					this.objList.forEach(function(obj){
+						if(!obj.vw) return;
+						//30為拖拉條區塊約略高度，100為視窗功能區塊寬度
+						if(
+							obj.posX+30>innerWidth || obj.posX+obj.width<100 ||
+							obj.posY+30>innerHeight || obj.posY<-15
+						){
+							obj.vw.moveTo(nextPosX,nextPosY).toTop();
+							if(nextPosY+130<=innerHeight){
+								nextPosY+=100;
+							}else{
+								nextPosX+=200;
+								nextPosY=30;
+							}
+						}
+					});
+					delete nextPosX,nextPosY;
+				break;
+				case 'resize'://自動縮放
+					var range=getRange();
+					var resizeX=innerWidth/range.endX;
+					var resizeY=innerHeight/range.endY;
+					var resize=(resizeX<=resizeY)? resizeX:resizeY;
+					this.objList.forEach(function(obj){
+						if(!obj.vw) return;
+						obj.vw.moveTo(
+							Math.floor(obj.posX*resize),
+							Math.floor(obj.posY*resize)
+						);
+						obj.vw.resize(
+							Math.floor(obj.width*resize),
+							Math.floor(obj.height*resize)
+						);
+					});
+					delete resizeX,resizeY,resize,range;
+				break;
+			}
+			vw.close();
+		};
+	})();
+	$('overflow_do').addEventListener('click',function(){
+		g8v.fixOverflow($('overflow_action').value);
+	});
+	addEventListener('resize',function(){ g8v.fixOverflow(); });
+	
 	/* Load Module*/
 	var loadStep=new taskStep();
 	['video','chat','iframe','sourceList','bg','bigScreen'].forEach(function(module){
@@ -153,5 +274,6 @@ addEventListener('load',function(){
 			else
 				console.error('[load]module %s 不存在',data.module)
 		},g8v);
+		g8v.fixOverflow();
 	});
 });

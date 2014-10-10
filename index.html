@@ -49,10 +49,10 @@
 	#setting,.window > .vw_option > span{
 		cursor: pointer;
 	}
-	#setting_window{
+	#setting_window,#overflow_confirm{
 		background-color: #FFF;
 	}
-	#setting_window > .vw_bar{
+	#setting_window > .vw_bar,#overflow_confirm > .vw_bar{
 		display: block;
 		position: static;
 	}
@@ -69,6 +69,27 @@
 		</div>
 		分享：
 		<input type="input" id="seting_url" readonly>
+	</div>
+	<div id="overflow_confirm" class="window">
+		<div class="vw_bar">修正視窗溢位</div>
+		<div class="vw_option">
+			<span class="vw_hide">X</span>
+		</div>
+		<p>目前的畫面大小超出了瀏覽器視窗大小，請選擇處理方法以顯示完整的畫面。</p>
+		<select id="overflow_action">
+			<option value="resize">自動縮放</option>
+			<option value="move">自動搬移</option>
+			<option value="moveInDisplay" selected>移動到可視範圍</option>
+			<option value="notthing">不處理</option>
+		</select>
+		<button id="overflow_do">處理</button>
+		<p id="overflow_browser">當前瀏覽器過小，放大視窗可解決此問題</p>
+		<p>
+			自動縮放：等比例縮放直到符合瀏覽器視窗大小<br>
+			自動搬移：自動移動視窗至合適的空白區域<br>
+			移動到可視範圍：只移動超出瀏覽器的視窗至可視範圍內<br>
+			不處理：不做任何處理
+		</p>
 	</div>
 </body>
 </html>
