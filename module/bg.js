@@ -115,13 +115,12 @@
 				code=data;
 				bgMapLayer.style.display='';
 				map.updateSize();
-				//socket=new WebSocket('ws://g8v-a0000778.rhcloud.com:8000/'+data,'mapPoint');
 				tryConnect++;
-				socket=new WebSocket('ws://192.168.1.123:10080/'+code,'mapPoint');
+				//socket=new WebSocket('ws://192.168.1.123:10080/'+code,'mapPoint');
+				socket=new WebSocket('ws://g8v-a0000778.rhcloud.com:8000/'+code,'mapPoint');
 				socket.addEventListener('message',ev_message);
 				socket.addEventListener('open',ev_open);
 				socket.addEventListener('close',ev_close);
-				//bg.mapMark('=====立法院=====',121.52007,25.0438);
 			};
 		})();
 		bg.mapUnload=function(){
