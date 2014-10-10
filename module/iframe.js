@@ -29,8 +29,8 @@
 	form.addEventListener('submit',function(e){
 		e.preventDefault();
 		var url=e.target.querySelector('[name=url]');
+		if(iframe.load(url.value)===false) alert('網址格式錯誤或不支援的格式！');
 		url.value='';
-		if(iframe.load(url)===false) alert('網址格式錯誤或不支援的格式！');
 	});
 	g8v.module.config.addItem(form);
 	g8v.module.iframe=iframe;
