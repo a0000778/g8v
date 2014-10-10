@@ -4,7 +4,7 @@
 			var obj=g8v.createObj(
 				'iframe',
 				[url],
-				title,
+				title? title:'頁面',
 				left? left:0,
 				top? top:0,
 				width? width:400,

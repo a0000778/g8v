@@ -3,7 +3,7 @@
 		var obj=g0v.createObj(
 			'sourceList',
 			[form],
-			title,
+			title? title:'來源清單',
 			left? left:0,
 			top? top:0,
 			width? width:400,

@@ -50,7 +50,7 @@
 			var obj=g8v.createObj(
 				'chat',
 				[source,path],
-				title,
+				title? title:source,
 				left? left:0,
 				top? top:0,
 				width? width:400,

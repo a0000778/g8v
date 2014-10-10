@@ -83,7 +83,7 @@
 			var obj=g8v.createObj(
 				'video',
 				[source,path],
-				title,
+				title? title:source,
 				left? left:0,
 				top? top:0,
 				width? width:800,

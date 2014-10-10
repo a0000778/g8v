@@ -36,7 +36,7 @@ var g8v={
 		var windowObj=$().$add('div',{
 			'className': 'window'
 		});
-		var titleObj=windowObj.$add('div',{'className': 'vw_bar'}).$add(document.createTextNode(title));
+		var titleObj=windowObj.$add('div',{'className': 'vw_bar'}).$add(document.createTextNode(title? title:obj.title));
 		windowObj.$add(
 			g8v.windowOption.reduceRight(
 				function(r,f){
