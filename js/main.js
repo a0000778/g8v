@@ -1,355 +1,281 @@
 var g8v={
-	'windowList': [],
 	'objList': [],
-	'bigscreen': null,
-	'videoSource': {
-		'justin': function(path){
-			return document.createTextNode('justin 已關站');
-		},
-		'ustream': function(path){
-			if(path.indexOf('recorded')===0){
-				return $.tag('iframe',{
-					'src': 'http://www.ustream.tv/embed/recorded/'+path.match(/^recorded\/(\d+)/)[1]+'?v=3&wmode=direct&autoplay=1',
-					'style': {
-						'width': '100%',
-						'height': '100%'
-					}
-				});
-			}
-			var tag=$.tag('iframe',{
-				'src': 'data:text/html,Loading...',
-				'style': {
-					'width': '100%',
-					'height': '100%',
-					'background': '#FFF'
-				}
+	'module': {},
+	'bgLayer': 0,
+	'windowOption': [
+		function(){
+			return $.tag('span',{
+				'className': 'vw_close',
+				'textContent': 'X'
 			});
-			new Ajax('POST','http://api.a0000778.idv.biz/g8v/getsourceid.php',{
-				'source': 'ustream',
-				'path': path.match(/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+/)[0]
-			}).on('load',function(){
-				tag.src=this.result()? 'http://www.ustream.tv/embed/'+this.result()+'?v=3&wmode=direct&autoplay=1':'data:text/html,Load Failed.';
-			}).on('error',function(){
-				tag.src='data:text/html,Loading...Fail'
-			}).send();
-			return tag;
 		},
-		'youtube': function(path){
-			var id=path.match(/(\?|&)v=([a-zA-Z0-9_-]+)/);
-			var list=path.match(/(\?|&)list=([a-zA-Z0-9_-]+)/);
-			return $.tag('iframe',{
-				'src': 'http://www.youtube.com/embed/'+(id? id[2]:'')+(list? '?list='+list[2]:''),
-				'allowfullscreen': 'true',
-				'style': {
-					'width': '100%',
-					'height': '100%'
-				}
-			})
-		}
-	},
-	'chatSource': {
-		'justin': function(path){
-			return document.createTextNode('justin 已關站');
-		},
-		'ustream': function(path){
-			if(!/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+/.test(path)){
-				return $.tag('iframe',{
-					'src': 'data:text/html,not support',
-					'style': {
-						'width': '100%',
-						'height': '100%',
-						'background': '#FFF'
-					}
-				});
-			}
-			var tag=$.tag('iframe',{
-				'src': 'data:text/html,Loading...',
-				'style': {
-					'width': '100%',
-					'height': '100%',
-					'background': '#FFF'
-				}
+		function(obj){
+			return $.tag('span',{
+				'textContent': '標',
+				'addEventListener': ['click',function(e){
+					var newtitle=prompt('請輸入新標題',obj.title);
+					if(newtitle===null) return;
+					obj.title=newtitle;
+					e.target.parentNode.parentNode.getElementsByClassName('vw_bar')[0].textContent=newtitle;
+					g8v.updateShareUrl();
+				}]
 			});
-			new Ajax('POST','http://api.a0000778.idv.biz/g8v/getsourceid.php',{
-				'source': 'ustream',
-				'path': path.match(/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+/)[0]
-			}).on('load',function(){
-				tag.src=this.result()? 'http://www.ustream.tv/socialstream/'+this.result()+'?siteMode=1?activeTab=socialStream&hideVideoTab=1&colorScheme=light&v=6':'data:text/html,Load Failed.';
-			}).send();
-			return tag;
+		},
+		function(){
+			return $.tag('span',{
+				'className': 'vw_opacity',
+				'textContent': '透'
+			});
 		}
+	],
+	'loadModule': function(module,onload){
+		if(onload) $().$add('script',{'src': 'module/'+module+'.js'}).addEventListener('load',onload);
+		else $().$add('script',{'src': 'module/'+module+'.js'});
 	},
-	
-	'_createWindow': function(obj,objId,title,content){
-		var titleObj=document.createTextNode(title);
-		var optObj=$.tag('div',{
-			'className': 'vw_option'
-		});
-		optObj.$add('span',{
-			'textContent': '大'
-		}).addEventListener('click',function(e){
-			g8v.bigscreen.content.innerHTML='';
-			g8v.bigscreen.content.$add(e.target.parentNode.parentNode.children[2].cloneNode(true));
-			g8v.bigscreen.open();
-			g8v.bigscreen.toTop();
-		});
-		optObj.$add('span',{
-			'className': 'vw_opacity',
-			'textContent': '透'
-		});
-		optObj.$add('span',{
-			'className': 'vw_title',
-			'textContent': '標'
-		}).addEventListener('click',function(e){
-			var newtitle=prompt('請輸入新標題',obj.value[obj.value.length-5]);
-			if(newtitle===null) return;
-			obj.value[obj.value.length-5]=newtitle
-			titleObj.nodeValue=newtitle;
-			g8v.updateShareUrl();
-		});
-		optObj.$add('span',{
-			'className': 'vw_close',
-			'textContent': 'X'
-		});
+	'createWindow': function(obj,title,content,option){
 		var windowObj=$().$add('div',{
-			'id': 'window_'+this.windowList.length,
 			'className': 'window'
 		});
-		windowObj.$add('div',{'className': 'vw_bar'}).$add(titleObj);
-		windowObj.$add(optObj,null,true).$add(content);
+		var titleObj=windowObj.$add('div',{'className': 'vw_bar'}).$add(document.createTextNode(title? title:obj.title));
+		windowObj.$add(
+			g8v.windowOption.reduceRight(
+				function(r,f){
+					return r.$add(f(obj),null,true);
+				},
+				$.tag('div',{
+					'className': 'vw_option'
+				})
+			)
+			,null,true
+		).$add(content);
 		var vw=new VirtualWindow(
-			'window_'+this.windowList.length,
-			obj.value[obj.value.length-4],
-			obj.value[obj.value.length-3],
-			obj.value[obj.value.length-2],
-			obj.value[obj.value.length-1]
+			windowObj,
+			obj.posX,
+			obj.posY,
+			obj.width,
+			obj.height
 		);
 		vw.on('move',function(){
-			obj.value[obj.value.length-4]=this.posX;
-			obj.value[obj.value.length-3]=this.posY;
+			obj.posX=this.posX;
+			obj.posY=this.posY;
 			g8v.updateShareUrl();
 		});
 		vw.on('resize',function(){
-			obj.value[obj.value.length-2]=this.width;
-			obj.value[obj.value.length-1]=this.height;
+			obj.width=this.width;
+			obj.height=this.height;
 			g8v.updateShareUrl();
 		});
 		vw.on('close',function(){
-			this.objList.splice(objId);
+			this.objList.splice(this.objList.indexOf(obj));
 			g8v.updateShareUrl();
 		}.bind(this));
-		this.windowList.push(vw);
-		return vw;
+		obj.vw=vw;
+		vw=undefined;
+		delete vw;
+		return obj.vw;
 	},
-	'createVideo': function(form,path,title,left,top,width,height){
-		if(!this.videoSource[form]) return false;
-		var obj={
-			'type': 'video',
-			'value': [
-				form,
-				path,
-				title,
-				left? left:0,
-				top? top:0,
-				width? width:800,
-				height? height:600
-			]
+	'createObj': function(module,args,title,posX,posY,width,height){
+		var data={
+			'module': module,
+			'args': args
 		};
-		this._createWindow(obj,this.objList.push(obj)-1,title,this.videoSource[form](path));
-		this.updateShareUrl();
-		return true;
-	},
-	'createChat': function(form,path,title,left,top,width,height){
-		if(!this.chatSource[form]) return false;
-		var obj={
-			'type': 'chat',
-			'value': [
-				form,
-				path,
-				title,
-				left? left:0,
-				top? top:0,
-				width? width:400,
-				height? height:600
-			]
-		};
-		this._createWindow(obj,this.objList.push(obj)-1,title,this.chatSource[form](path));
-		this.updateShareUrl();
-		return true;
-	},
-	'createIFrame': function(url,title,left,top,width,height){
-		var obj={
-			'type': 'iframe',
-			'value': [
-				url,
-				title,
-				left? left:0,
-				top? top:0,
-				width? width:400,
-				height? height:600
-			]
-		};
-		this._createWindow(obj,this.objList.push(obj)-1,title,$.tag('iframe',{
-			'src': url,
-			'style': {
-				'width': '100%',
-				'height': '100%',
-				'background': '#FFF'
-			}
-		}));
-		this.updateShareUrl();
-	},
-	'createSourceList': function(form,title,left,top,width,height){
-		var obj={
-			'type': 'sourceList',
-			'value': [
-				form,
-				title,
-				left? left:0,
-				top? top:0,
-				width? width:400,
-				height? height:600
-			]
-		};
-		var content=$.tag('div',{
-			'textContent': 'Loading...',
-			'style': {
-				'backgroundColor': '#FFF',
-				'width': '100%',
-				'height': '100%'
-			}
-		});
-		new Ajax('get','https://ethercalc.org/_/'+form+'/csv').on('load',function(){
-			content.innerHTML='';
-			content.$add(this.result().csvToArray({'rSep':'\n'}).reduce(function(r,i){
-				if(i[0].charAt(0)=='#') return r;
-				var li=$.tag('li',{'textContent':i[0]});
-				switch(i[1]){
-					case 'video':
-						var url=i[2].match(/^(http(s)?:\/\/)?([a-zA-Z0-9-]+\.)?([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/(.+)/);
-						li.addEventListener('click',function(){
-							if(!g8v.createVideo(url[4],url[6],url[4])) alert('網址格式錯誤或不支援的格式！');
-						});
-					break;
-					case 'chat':
-						var url=i[2].match(/^(http(s)?:\/\/)?([a-zA-Z0-9-]+\.)?([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/(.+)/);
-						li.addEventListener('click',function(){
-							if(!g8v.createChat(url[4],url[6],url[4])) alert('網址格式錯誤或不支援的格式！');
-						});
-					break;
-					case 'page':
-						li.addEventListener('click',function(){
-							g8v.createIFrame(i[2],'頁面');
-						});
-					break;
-					default:
-						return r;
-				}
-				return r.$add(li,null,true);
-			},$.tag('ul')));
-		}).send();
-		this._createWindow(obj,this.objList.push(obj)-1,title,content);
-		this.updateShareUrl();
-	},
-	'updateBackground': function(data){
-		if(/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/.test(data)){
-			$().style.background=data;
-		}else{
-			$().style.background='url('+data+')';
+		if(title && width && height && posX!=undefined && posY!=undefined){
+			data.title=title
+			data.width=parseInt(width,10);
+			data.height=parseInt(height,10);
+			data.posX=parseInt(posX,10);
+			data.posY=parseInt(posY,10);
 		}
-		this.objList.push({
-			'type': 'bg',
-			'value': [data]
-		});
-		this.updateShareUrl();
+		this.objList.push(data);
+		return data;
 	},
 	'updateShareUrl': function(){
 		$('seting_url').value=location.origin+location.pathname+'#'+this.objList.reduce(function(r,v){
-			return r+(r.length? '&':'')+v.type+'='+v.value.reduce(function(r,v){
-				return r+(r.length? '|':'')+encodeURIComponent(v);
-			},'');
+			return r+
+				(r.length? '&':'')+v.module+'='+v.args.reduce(function(r,v){
+					return r+(r.length? '|':'')+encodeURIComponent(v);
+				},'')+
+				(
+					(v.title && v.width && v.height && v.posX!=undefined && v.posY!=undefined)?
+					'|'+encodeURIComponent(v.title)+'|'+v.posX+'|'+v.posY+'|'+v.width+'|'+v.height:''
+				);
 		},'');
 	}
 };
-
 addEventListener('load',function(){
-	var settingWindow=new VirtualWindow('setting_window',0,0,350);
-	settingWindow.close();
-	$('setting').addEventListener('click',function(){
-		settingWindow.open();
-		settingWindow.toTop();
-	});
-	$('setting_createVideo').addEventListener('submit',function(e){
-		e.preventDefault();
-		var url=e.target.querySelector('[name=url]').value.match(/^(http(s)?:\/\/)?([a-zA-Z0-9-]+\.)?([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/(.+)/);
-		e.target.querySelector('[name=url]').value='';
-		if(!g8v.createVideo(url[4],url[6],url[4])) alert('網址格式錯誤或不支援的格式！');
-	});
-	$('setting_createChat').addEventListener('submit',function(e){
-		e.preventDefault();
-		var url=e.target.querySelector('[name=url]').value.match(/^(http(s)?:\/\/)?([a-zA-Z0-9-]+\.)?([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/(.+)/);
-		e.target.querySelector('[name=url]').value='';
-		if(!g8v.createChat(url[4],url[6],url[4])) alert('網址格式錯誤或不支援的格式！');
-	});
-	$('setting_createIFrame').addEventListener('submit',function(e){
-		e.preventDefault();
-		g8v.createIFrame(e.target.querySelector('[name=url]').value,'頁面');
-		e.target.querySelector('[name=url]').value='';
-	});
-	$('setting_createSourceList').addEventListener('submit',function(e){
-		e.preventDefault();
-		g8v.createSourceList(e.target.querySelector('[name=code]').value,'清單');
-		e.target.querySelector('[name=code]').value='';
-	});
-	$('setting_updateBackground').addEventListener('submit',function(e){
-		e.preventDefault();
-		g8v.updateBackground(e.target.querySelector('[name=data]').value);
-		e.target.querySelector('[name=data]').value='';
-	});
-	$('seting_url').addEventListener('click',function(){this.select();});
-	g8v.bigscreen=new VirtualWindow($('bigscreen_window'),0,0,800,600)
-	.close()
-	.on('close',function(){
-		g8v.bigscreen.content.innerHTML='';
-	});
-	g8v.bigscreen.content=g8v.bigscreen.obj.$add('div',{
-		'style': {
-			'width': '100%',
-			'height': '100%'
-		}
-	});
-	//網址格式
-	location.hash.substring(1,location.hash.length).split('&').reduce(function(r,v){
-		var s=v.indexOf('=');
-		r.push({
-			'type': v.substring(0,s),
-			'value': v.substring(s+1,v.length).split('|').reduce(function(r,v){
-				r.push(decodeURIComponent(v));
-				return r;
-			},[])
+	/* Module ConfigWindow */
+	(function(){
+		var configVW=$('setting_window');
+		var configVWObj=new VirtualWindow(configVW,0,0,350).close();
+		var addItemBefore=configVW.childNodes[4];
+		$('setting').addEventListener('click',function(){
+			configVWObj.open();
+			if(configVW.scrollWidth)
+				configVWObj.resize(
+					Math.ceil(configVW.scrollWidth/10)*10+10,
+					Math.ceil(configVW.scrollHeight/10)*10+10
+				);
+			configVWObj.toTop();
 		});
-		return r;
-	},[]).forEach(function(data){
-		console.log('[load]type='+data.type+',value='+data.value.toString())
-		switch(data.type){
-			case 'video':
-				if(!this.createVideo.apply(this,data.value)) alert('網址格式錯誤或不支援的格式！');
-			break;
-			case 'chat':
-				if(!this.createChat.apply(this,data.value)) alert('網址格式錯誤或不支援的格式！');
-			break;
-			case 'iframe':
-				this.createIFrame.apply(this,data.value);
-			break;
-			case 'sourceList':
-				this.createSourceList.apply(this,data.value);
-			break;
-			case 'bg':
-				this.updateBackground.apply(this,data.value);
-			break;
+		g8v.module.config={
+			'window': configVWObj,
+			'addItem': function(htmlObj){
+				if(configVW.scrollWidth)
+					configVWObj.resize(
+						Math.ceil(configVW.scrollWidth/10)*10+10,
+						Math.ceil(configVW.scrollHeight/10)*10+10
+					);
+				return configVW.$add(htmlObj,addItemBefore);
+			}
+		};
+	})();
+	$('seting_url').addEventListener('click',function(){this.select();});
+	
+	/* Fix Overflow Window */
+	g8v.fixOverflow=(function(){
+		var vw=new VirtualWindow($('overflow_confirm'),0,0,400,300).close();
+		var select=$('overflow_action');
+		var browser=$('overflow_browser');
+		var getRange=function(){
+			return g8v.objList.reduce(function(result,obj){
+				if(obj.width && obj.height && obj.posX!=undefined && obj.posY!=undefined){
+					if(result.startX>obj.posX) result.startX=obj.posX;
+					if(result.startY>obj.posY) result.startY=obj.posY;
+					var endX=obj.posX+obj.width;
+					var endY=obj.posY+obj.height;
+					if(result.endX<endX) result.endX=endX;
+					if(result.endY<endY) result.endY=endY;
+				}
+				return result;
+			},{
+				'startX': 0,
+				'startY': 0,
+				'endX': 0,
+				'endY': 0
+			});
 		}
+		var check=function(){
+			var range=getRange();
+			if(range.endX>innerWidth || range.endY>innerHeight){
+				//推薦處理方法
+				var width=range.endX-range.startX;
+				var height=range.endY-range.startY;
+				//瀏覽器過小，放大即可解決問題
+				browser.style.display=(screen.width>=width && screen.height>=height)? '':'none';
+				if(width<=innerWidth && height<=innerHeight){
+					//自動搬移：實際區塊小於畫面大小
+					select.value='move';
+				}else if(height/width<innerHeight/innerWidth*1.2){
+					//移動到可視範圍：單螢幕顯示多螢幕來源
+					select.value='moveInDisplay';
+				}else{
+					//自動縮放：解析度問題，縮放處理
+					select.value='resize';
+				}
+				vw.open().moveTo(
+					Math.floor((innerWidth-400)/2),
+					Math.floor((innerHeight-300)/2)
+				).toTop();
+			}else{
+				vw.close();
+			}
+		}
+		return function(action){
+			if(!action){
+				check();
+				return;
+			}
+			switch(action){
+				case 'move'://自動搬移
+					var range=getRange();
+					var width=range.endX-range.startX;
+					var height=range.endY-range.startY;
+					if(width<=innerWidth && height<=innerHeight){
+						var x=range.startX-((innerWidth-width)/2);
+						var y=range.startY-((innerHeight-height)/2);
+						this.objList.forEach(function(obj){
+							if(!obj.vw) return;
+							obj.vw.moveTo(obj.posX-x,obj.posY-y);
+						});
+						delete x,y;
+					}
+					delete range,width,height;
+				break;
+				case 'moveInDisplay'://移動到可視範圍
+					var nextPosX=30;
+					var nextPosY=30;
+					this.objList.forEach(function(obj){
+						if(!obj.vw) return;
+						//30為拖拉條區塊約略高度，100為視窗功能區塊寬度
+						if(
+							obj.posX+30>innerWidth || obj.posX+obj.width<100 ||
+							obj.posY+30>innerHeight || obj.posY<-15
+						){
+							obj.vw.moveTo(nextPosX,nextPosY).toTop();
+							if(nextPosY+130<=innerHeight){
+								nextPosY+=100;
+							}else{
+								nextPosX+=200;
+								nextPosY=30;
+							}
+						}
+					});
+					delete nextPosX,nextPosY;
+				break;
+				case 'resize'://自動縮放
+					var range=getRange();
+					var resizeX=innerWidth/range.endX;
+					var resizeY=innerHeight/range.endY;
+					var resize=(resizeX<=resizeY)? resizeX:resizeY;
+					this.objList.forEach(function(obj){
+						if(!obj.vw) return;
+						obj.vw.moveTo(
+							Math.floor(obj.posX*resize),
+							Math.floor(obj.posY*resize)
+						);
+						obj.vw.resize(
+							Math.floor(obj.width*resize),
+							Math.floor(obj.height*resize)
+						);
+					});
+					delete resizeX,resizeY,resize,range;
+				break;
+			}
+			vw.close();
+		};
+	})();
+	$('overflow_do').addEventListener('click',function(){
+		g8v.fixOverflow($('overflow_action').value);
+	});
+	addEventListener('resize',function(){ g8v.fixOverflow(); });
+	
+	/* Load Module*/
+	var loadStep=new taskStep();
+	['video','chat','iframe','sourceList','bg','bigScreen'].forEach(function(module){
+		this.loadModule(module,loadStep.spawnCallback());
 	},g8v);
-	if(!g8v.objList.length)
-		g8v.createIFrame('https://g0v.hackpad.com/ep/pad/static/JBDd9hvDt5f','使用說明',307,0,490,403);
+	
+	/* Load data */
+	loadStep.callback(function(){
+		location.hash.length>1 && location.hash.substring(1,location.hash.length).split('&').reduce(function(r,v){
+			var s=v.indexOf('=');
+			r.push({
+				'module': v.substring(0,s),
+				'args': v.substring(s+1,v.length).split('|').reduce(function(r,v){
+					r.push(decodeURIComponent(v));
+					return r;
+				},[])
+			});
+			return r;
+		},[]).forEach(function(data){
+			console.log('[load]module=%s,args=%s',data.module,data.args.toString())
+			if(this.module[data.module])
+				this.module[data.module].load.apply(this.module[data.module],data.args);
+			else
+				console.error('[load]module %s 不存在',data.module)
+		},g8v);
+		if(!g8v.objList.length)
+			g8v.module.iframe.load('https://g0v.hackpad.com/ep/pad/static/JBDd9hvDt5f','使用說明',307,0,500,400);
+		g8v.fixOverflow();
+	});
 });
-addEventListener('hashchange',location.reload.bind(location));
