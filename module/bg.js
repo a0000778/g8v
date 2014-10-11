@@ -45,11 +45,13 @@
 		}).$add('div',{
 			'className': 'name'
 		},null,true);
+		var waitMark=false;
+		var bgMapLayerIndex=g8v.bgLayer++;
 		var bgMapLayer=$().$add('div',{
 			'className': 'mod_bg',
 			'style': {
 				'display': 'none',
-				'zIndex': g8v.bgLayer++
+				'zIndex': bgMapLayerIndex
 			}
 		});
 		var mapView=new ol.View({
@@ -57,6 +59,11 @@
 			zoom: 1
 		});
 		var map=new ol.Map({
+			'controls': ol.control.defaults({
+				'attributionOptions': {
+					'collapsible': false
+				}
+			}),
 			'interactions': ol.interaction.defaults().extend([new ol.interaction.Select()]),
 			'target': bgMapLayer,
 			'layers': [new ol.layer.Tile({source: new ol.source.OSM()})],
@@ -137,6 +144,7 @@
 			}
 			bgMapLayer.style.display='none';
 			code=null;
+			bg.mapAbortMark();
 		};
 		bg.mapMark=function(name,pos,mod,args,formServer){
 			var mark=markList['p_'+name];
@@ -147,6 +155,10 @@
 					if(!(mark.module.length && g8v.module.hasOwnProperty(mark.module))) return;
 					var mod=g8v.module[mark.module];
 					mod.load.apply(mod,mark.args);
+				});
+				obj.addEventListener('contextmenu',function(e){
+					e.preventDefault();
+					if(confirm('確定要刪除標記點 '+name+' ?')) bg.mapUnMark(name);
 				});
 				mark=markList['p_'+name]={
 					'name': name,
@@ -181,18 +193,64 @@
 					'args': mark.args
 				}));
 		};
-		bg.mapUnMark=function(name){
+		bg.mapUnMark=function(name,formServer){
 			var mark=markList['p_'+name];
 			if(!mark) return;
 			map.removeOverlay(mark.layer);
-			mark=bgMapMarkList['p_'+name]=undefined;
-			delete mark,bgMapMarkList['p_'+name];
+			mark=markList['p_'+name]=undefined;
+			delete mark,markList['p_'+name];
 			if(!formServer)
-				bgMapSocket.send(JSON.stringify({
+				socket.send(JSON.stringify({
 					'action': 'delete',
 					'name': name
 				}));
 		};
+		bg.mapStartMark=function(obj){
+			if(!code){
+				alert('標記地點需搭配背景地圖使用！');
+				return;
+			}
+			if(waitMark){
+				return false;
+			}
+			bgMapLayer.style.zIndex=2147483646;
+			alert('請擊點欲標記的位址');
+			waitMark=obj;
+			return true;
+		};
+		bg.mapAbortMark=function(){
+			bgMapLayer.style.zIndex=bgMapLayerIndex;
+			waitMark=false;
+		};
+		g8v.windowOption.push(function(obj){
+			return $.tag('span',{
+				'textContent': '地',
+				'addEventListener': ['click',function(e){
+					if(!bg.mapStartMark(obj))
+						alert('其他項目正在標記中');
+				}]
+			});
+		});
+		map.on('click',function(e){
+			if(!waitMark) return;
+			var name;
+			while(!(name=prompt('請輸入標記點名稱：(輸入現存標記點名稱則表示更動該標記點)'))){
+				if(name!==null) continue;
+				bg.mapAbortMark();
+				alert('取消標記');
+				return;
+			}
+			if(markList['p_'+name] && !confirm('確定要更動標記點 '+name+' ?')) return;
+			bg.mapMark(
+				name,
+				ol.proj.transform(e.coordinate,'EPSG:900913','EPSG:4326'),
+				waitMark.module,
+				(waitMark.title && waitMark.width && waitMark.height && waitMark.posX!=undefined && waitMark.posY!=undefined)?
+					waitMark.args.concat([waitMark.title,waitMark.posX,waitMark.posY,waitMark.width,waitMark.height]):
+					waitMark.args
+			);
+			bg.mapAbortMark();
+		});
 	})();
 	
 	var controlForm=$.tag('form',{'textContent':'設定背景：'});
