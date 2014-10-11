@@ -57,6 +57,11 @@
 			zoom: 1
 		});
 		var map=new ol.Map({
+			'controls': ol.control.defaults({
+				'attributionOptions': {
+					'collapsible': false
+				}
+			}),
 			'interactions': ol.interaction.defaults().extend([new ol.interaction.Select()]),
 			'target': bgMapLayer,
 			'layers': [new ol.layer.Tile({source: new ol.source.OSM()})],
