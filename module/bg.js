@@ -156,6 +156,10 @@
 					var mod=g8v.module[mark.module];
 					mod.load.apply(mod,mark.args);
 				});
+				obj.addEventListener('contextmenu',function(e){
+					e.preventDefault();
+					if(confirm('確定要刪除標記點 '+name+' ?')) bg.mapUnMark(name);
+				});
 				mark=markList['p_'+name]={
 					'name': name,
 					'pos': pos,
