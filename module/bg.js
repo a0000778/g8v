@@ -121,7 +121,7 @@
 				bg.mapUnload();
 				code=data;
 				bgMapLayer.style.display='';
-				map.updateSize();
+				map.setSize([innerWidth,innerHeight]);
 				tryConnect++;
 				//socket=new WebSocket('ws://192.168.1.123:10080/'+code,'mapPoint');
 				socket=new WebSocket('ws://g8v-a0000778.rhcloud.com:8000/'+code,'mapPoint');
