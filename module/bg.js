@@ -206,13 +206,8 @@
 				}));
 		};
 		bg.mapStartMark=function(obj){
-			if(!code){
-				alert('標記地點需搭配背景地圖使用！');
-				return;
-			}
-			if(waitMark){
-				return false;
-			}
+			if(!code) return null;
+			if(waitMark) return false;
 			bgMapLayer.style.zIndex=2147483646;
 			alert('請擊點欲標記的位址');
 			waitMark=obj;
@@ -226,8 +221,10 @@
 			return $.tag('span',{
 				'textContent': '地',
 				'addEventListener': ['click',function(e){
-					if(!bg.mapStartMark(obj))
-						alert('其他項目正在標記中');
+					switch(bg.mapStartMark(obj)){
+						case false: alert('其他項目正在標記中'); break;
+						case null: alert('標記地點需搭配背景地圖使用！'); break;
+					}
 				}]
 			});
 		});
