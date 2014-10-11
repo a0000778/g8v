@@ -186,14 +186,14 @@
 					'args': mark.args
 				}));
 		};
-		bg.mapUnMark=function(name){
+		bg.mapUnMark=function(name,formServer){
 			var mark=markList['p_'+name];
 			if(!mark) return;
 			map.removeOverlay(mark.layer);
-			mark=bgMapMarkList['p_'+name]=undefined;
-			delete mark,bgMapMarkList['p_'+name];
+			mark=markList['p_'+name]=undefined;
+			delete mark,markList['p_'+name];
 			if(!formServer)
-				bgMapSocket.send(JSON.stringify({
+				socket.send(JSON.stringify({
 					'action': 'delete',
 					'name': name
 				}));
