@@ -1,0 +1,22 @@
+{
+	"author": "a0000778",
+	"status": "alpha",
+	"name": "g8v",
+	"name_zh": "G8V 電視牆",
+	"description": "打造高自由度、自訂性、泛用性的電視牆監看介面，方便閱聽者能自己做判斷的中性工具平台",
+	"description_zh": "打造高自由度、自訂性、泛用性的電視牆監看介面，方便閱聽者能自己做判斷的中性工具平台",
+	"homepage": "http://a0000778.github.io/g8v",
+	"document": "http://hackfoldr.org/G8VTV/",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/a0000778/g8v"
+	},
+	"licenses": [{"type":"MIT"}],
+	"keywords": ["g8v","電視牆","javascript"],
+	"products": "app",
+	"projects": ["g8v"],
+	"contributors": [
+		"a0000778"
+	],
+	"needs": ["designer"]
+}

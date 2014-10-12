@@ -12,7 +12,6 @@ function VirtualWindow(obj,left,top,width,height,option){
 		'dragBarSelect': option.hasOwnProperty('dragBarSelect')? option.bar:'.vw_bar',
 		'hideObjSelect': option.hasOwnProperty('hideButtonSelect')? option.hideButtonSelect:'.vw_hide',
 		'closeObjSelect': option.hasOwnProperty('closeObjSelect')? option.closeObjSelect:'.vw_close',
-		'opacityObjSelect': option.hasOwnProperty('opacityObjSelect')? option.opacityObjSelect:'.vw_opacity'
 	};
 	this.posX=parseInt(left);
 	this.posY=parseInt(top);
@@ -49,9 +48,6 @@ function VirtualWindow(obj,left,top,width,height,option){
 	this.option.closeObjSelect && this.obj.querySelectorAll(this.option.closeObjSelect).forEach(function(o){
 		o.addEventListener('click',this.close.bind(this,true));
 	},this);
-	this.option.opacityObjSelect && this.obj.querySelectorAll(this.option.opacityObjSelect).forEach(function(o){
-		o.addEventListener('click',this.opacity.bind(this,undefined));
-	},this);
 }
 VirtualWindow.topZIndex=1000;
 VirtualWindow.consoleLayer=null;
@@ -70,26 +66,26 @@ VirtualWindow.prototype.close=function(del){
 	this.trigger('close');
 	return this;
 }
-VirtualWindow.prototype.opacity=function(value){
-	if(value!==undefined){
-		this.obj.style.opacity=value.toString();
-	}else{
-		var opacity=parseFloat(this.obj.style.opacity || '1',10);
-		if(opacity>=1) this.obj.style.opacity='0.7';
-		else if(opacity>=0.7) this.obj.style.opacity='0.4';
-		else if(opacity>=0.4) this.obj.style.opacity='0.1';
-		else this.obj.style.opacity='1';
-	}
+VirtualWindow.prototype.on=function(eventName,func){
+	var evList=this.event[eventName];
+	if(!evList) return false;
+	evList.push(func);
 	return this;
 }
-VirtualWindow.prototype.on=function(eventName,func){
-	if(!this.event[eventName]) return false;
-	this.event[eventName].push(func);
+VirtualWindow.prototype.unOn=function(eventName,func){
+	var evList=this.event[eventName];
+	if(!evList) return false;
+	if(func){
+		var evFuncId=evList.indexOf(func);
+		if(evFuncId) evList.splice(evFuncId,1);
+	}else
+		evList.splice(0,evList.length);
 	return this;
 }
 VirtualWindow.prototype.trigger=function(eventName,args){
-	if(!this.event[eventName]) return false;
-	this.event[eventName].forEach(function(func){
+	var evList=this.event[eventName];
+	if(!evList) return false;
+	evList.forEach(function(func){
 		func.apply(this,args);
 	},this);
 	return this;
