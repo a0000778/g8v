@@ -49,6 +49,7 @@
 		}).send();
 		g8v.createWindow(obj,title,content);
 		g8v.updateShareUrl();
+		return obj;
 	};
 	var form=$.tag('form')
 		.$add(document.createTextNode('新增來源清單：'),null,true)
