@@ -83,13 +83,25 @@ VirtualWindow.prototype.opacity=function(value){
 	return this;
 }
 VirtualWindow.prototype.on=function(eventName,func){
-	if(!this.event[eventName]) return false;
-	this.event[eventName].push(func);
+	var evList=this.event[eventName];
+	if(!evList) return false;
+	evList.push(func);
+	return this;
+}
+VirtualWindow.prototype.unOn=function(eventName,func){
+	var evList=this.event[eventName];
+	if(!evList) return false;
+	if(func){
+		var evFuncId=evList.indexOf(func);
+		if(evFuncId) evList.splice(evFuncId,1);
+	}else
+		evList.splice(0,evList.length);
 	return this;
 }
 VirtualWindow.prototype.trigger=function(eventName,args){
-	if(!this.event[eventName]) return false;
-	this.event[eventName].forEach(function(func){
+	var evList=this.event[eventName];
+	if(!evList) return false;
+	evList.forEach(function(func){
 		func.apply(this,args);
 	},this);
 	return this;
