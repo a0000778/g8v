@@ -77,7 +77,8 @@ var g8v={
 	'createObj': function(module,args,title,posX,posY,width,height){
 		var data={
 			'module': module,
-			'args': args
+			'args': args,
+			'append': []
 		};
 		if(title && width && height && posX!=undefined && posY!=undefined){
 			data.title=title
@@ -98,6 +99,16 @@ var g8v={
 				(
 					(v.title && v.width && v.height && v.posX!=undefined && v.posY!=undefined)?
 					'|'+encodeURIComponent(v.title)+'|'+v.posX+'|'+v.posY+'|'+v.width+'|'+v.height:''
+				)+
+				(
+					v.append.length?
+					'+'+v.append.reduce(function(r,i){
+						r.push(i.module+'='+i.args.reduce(function(r,v){
+							return r+(r.length? '|':'')+encodeURIComponent(v);
+						},''));
+						return r;
+					},[]).join('+'):
+					''
 				);
 		},'');
 	}
@@ -256,24 +267,58 @@ addEventListener('load',function(){
 	},g8v);
 	
 	/* Load data */
-	loadStep.callback(function(){
-		location.hash.length>1 && location.hash.substring(1,location.hash.length).split('&').reduce(function(r,v){
-			var s=v.indexOf('=');
-			r.push({
-				'module': v.substring(0,s),
-				'args': v.substring(s+1,v.length).split('|').reduce(function(r,v){
+	loadStep.callback((function(){
+		var splitMA=function(d){
+			m=d.indexOf('=');
+			return {
+				'module': d.substring(0,m),
+				'args': d.substring(m+1,d.length).split('|').reduce(function(r,v){
 					r.push(decodeURIComponent(v));
 					return r;
 				},[])
-			});
-			return r;
-		},[]).forEach(function(data){
-			console.log('[load]module=%s,args=%s',data.module,data.args.toString())
-			if(this.module[data.module])
-				this.module[data.module].load.apply(this.module[data.module],data.args);
-			else
-				console.error('[load]module %s 不存在',data.module)
-		},g8v);
-		g8v.fixOverflow();
-	});
+			};
+		};
+		return function(){
+			location.hash.length>1 && location.hash.substring(1,location.hash.length).split('&').reduce(function(r,v){
+				var a=v.split('+');
+				var obj=splitMA(a.shift());
+				obj.append=a.reduce(function(r,v){
+					r.push(splitMA(v));
+					return r;
+				},[]);
+				r.push(obj);
+				return r;
+			},[]).forEach(function(objData){
+				console.log('[load]模組=%s,args=%s',objData.module,objData.args.join(','));
+				var module=this.module[objData.module];
+				if(module && module.load){
+					var obj=module.load.apply(module,objData.args);
+					if(obj===false){
+						console.log('[load]模組 %s 載入失敗',objData.module);
+						return;
+					}
+					if(!obj && objData.append.length){
+						console.log('[load]模組 %s 不支援 append 操作，略過',objData.module);
+						return;
+					}
+					objData.append.forEach(function(objAppend){
+						console.log('[load]append 模組=%s,args=%s',objAppend.module,objAppend.args.join(','));
+						var module=this[objAppend.module];
+						if(module && module.append){
+							module.append.apply(module,[obj].concat(objAppend.args));
+						}else if(!module){
+							console.error('[load]模組 %s 不存在',objAppend.module);
+						}else{
+							console.error('[load]模組 %s 不支援 append 方法',objAppend.module);
+						}
+					},g8v.module);
+				}else if(!module){
+					console.error('[load]模組 %s 不存在',data.module);
+				}else{
+					console.error('[load]模組 %s 不支援 load 方法',data.module);
+				}
+			},g8v);
+			g8v.fixOverflow();
+		};
+	})());
 });
