@@ -12,7 +12,6 @@ function VirtualWindow(obj,left,top,width,height,option){
 		'dragBarSelect': option.hasOwnProperty('dragBarSelect')? option.bar:'.vw_bar',
 		'hideObjSelect': option.hasOwnProperty('hideButtonSelect')? option.hideButtonSelect:'.vw_hide',
 		'closeObjSelect': option.hasOwnProperty('closeObjSelect')? option.closeObjSelect:'.vw_close',
-		'opacityObjSelect': option.hasOwnProperty('opacityObjSelect')? option.opacityObjSelect:'.vw_opacity'
 	};
 	this.posX=parseInt(left);
 	this.posY=parseInt(top);
@@ -49,9 +48,6 @@ function VirtualWindow(obj,left,top,width,height,option){
 	this.option.closeObjSelect && this.obj.querySelectorAll(this.option.closeObjSelect).forEach(function(o){
 		o.addEventListener('click',this.close.bind(this,true));
 	},this);
-	this.option.opacityObjSelect && this.obj.querySelectorAll(this.option.opacityObjSelect).forEach(function(o){
-		o.addEventListener('click',this.opacity.bind(this,undefined));
-	},this);
 }
 VirtualWindow.topZIndex=1000;
 VirtualWindow.consoleLayer=null;
@@ -68,18 +64,6 @@ VirtualWindow.prototype.close=function(del){
 	if(del) this.obj.$del();
 	else this.obj.style.display='none';
 	this.trigger('close');
-	return this;
-}
-VirtualWindow.prototype.opacity=function(value){
-	if(value!==undefined){
-		this.obj.style.opacity=value.toString();
-	}else{
-		var opacity=parseFloat(this.obj.style.opacity || '1',10);
-		if(opacity>=1) this.obj.style.opacity='0.7';
-		else if(opacity>=0.7) this.obj.style.opacity='0.4';
-		else if(opacity>=0.4) this.obj.style.opacity='0.1';
-		else this.obj.style.opacity='1';
-	}
 	return this;
 }
 VirtualWindow.prototype.on=function(eventName,func){

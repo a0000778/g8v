@@ -20,12 +20,6 @@ var g8v={
 					g8v.updateShareUrl();
 				}]
 			});
-		},
-		function(){
-			return $.tag('span',{
-				'className': 'vw_opacity',
-				'textContent': '透'
-			});
 		}
 	],
 	'loadModule': function(module,onload){
@@ -262,7 +256,7 @@ addEventListener('load',function(){
 	
 	/* Load Module*/
 	var loadStep=new taskStep();
-	['video','chat','iframe','sourceList','bg','bigScreen'].forEach(function(module){
+	['opacity','video','chat','iframe','sourceList','bg','bigScreen'].forEach(function(module){
 		this.loadModule(module,loadStep.spawnCallback());
 	},g8v);
 	
