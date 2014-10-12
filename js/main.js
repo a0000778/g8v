@@ -308,9 +308,9 @@ addEventListener('load',function(){
 						}
 					},g8v.module);
 				}else if(!module){
-					console.error('[load]模組 %s 不存在',data.module);
+					console.error('[load]模組 %s 不存在',objData.module);
 				}else{
-					console.error('[load]模組 %s 不支援 load 方法',data.module);
+					console.error('[load]模組 %s 不支援 load 方法',objData.module);
 				}
 			},g8v);
 			g8v.fixOverflow();
