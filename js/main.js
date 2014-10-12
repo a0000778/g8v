@@ -2,6 +2,7 @@ var g8v={
 	'objList': [],
 	'module': {},
 	'bgLayer': 0,
+	'topLayer': 2000000000,
 	'windowOption': [
 		function(){
 			return $.tag('span',{
