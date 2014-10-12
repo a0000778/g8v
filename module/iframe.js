@@ -19,6 +19,7 @@
 				}
 			}));
 			g8v.updateShareUrl();
+			return obj;
 		}
 	};
 	var form=$.tag('form')

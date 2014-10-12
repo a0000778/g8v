@@ -1,6 +1,27 @@
 (function(){
 	var chat={
 		'source': {
+			'livehouse': function(path){
+				var id=path.match(/^channel\/([a-zA-Z0-9_-]+)/);
+				var record=path.indexOf('/record/');
+				if(record===-1)
+					return $.tag('iframe',{
+						'src': 'https://livehouse.in/embed/channel/'+(id? id[1]:''),
+						'allowfullscreen': 'true',
+						'style': {
+							'width': '100%',
+							'height': '100%'
+						}
+					});
+				else
+					return $.tag('iframe',{
+						'src': 'data:text/html,尚不支援記錄！',
+						'style': {
+							'width': '100%',
+							'height': '100%'
+						}
+					});
+			},
 			'twitch': function(path){
 				var id=path.match(/^([a-zA-Z0-9_-]+)/);
 				return $.tag('iframe',{
@@ -58,6 +79,7 @@
 			);
 			g8v.createWindow(obj,title,this.source[source](path));
 			g8v.updateShareUrl();
+			return obj;
 		}
 	};
 	var form=$.tag('form')
