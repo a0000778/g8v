@@ -21,7 +21,7 @@
 		overflow: hidden;
 		margin: 5px;
 	}
-	.window:hover{
+	.window:hover,.window.draging{
 		margin: 0px;
 		border: 1px solid #000;
 		padding: 4px;
@@ -30,7 +30,7 @@
 		background-color: #DDD;
 		display: none;
 	}
-	.window:hover > .vw_bar{
+	.window:hover > .vw_bar,.window.draging > .vw_bar{
 		display: block;
 		position: absolute;
 		top: 5px;
@@ -43,7 +43,7 @@
 		top: 5px;
 		display: none;
 	}
-	.window:hover > .vw_option{
+	.window:hover > .vw_option,.window.draging > .vw_option{
 		display: block;
 	}
 	#setting,.window > .vw_option > span{
