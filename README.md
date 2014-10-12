@@ -8,6 +8,12 @@
 ```
 模組名稱=參數1|參數2|參數3 ...
 ```
+另有附加功能的格式，於前者最後一個參數後加上
+```
++模組名稱=參數1|參數2|參數3 ...
+```
+附加功能可無上限附加
+
 參數均經過 `encodeURIComponent` 進行編碼處理
 
 ## 自訂說明
@@ -40,6 +46,7 @@
 - `g8v.loadModule(module[],onload])` 載入模組
 - `g8v.module.*.*` 模組 API
 - `g8v.module.*.load(args)` 從 url 載入的 API
+- `g8v.module.*.append(obj,args)` 從 url 載入的 API，針對現存功能再做附加功能操作
 - `g8v.objList` 當前物件列表
 - `g8v.updateShareUrl()` 刷新分享網址
 - `g8v.windowOption[*](obj)` 視窗附帶功能
