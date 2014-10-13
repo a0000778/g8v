@@ -1,31 +1,11 @@
 (function(){
 	var chat={
 		'source': {
-			'livehouse': function(path){
-				var id=path.match(/^channel\/([a-zA-Z0-9_-]+)/);
-				var record=path.indexOf('/record/');
-				if(record===-1)
-					return $.tag('iframe',{
-						'src': 'https://livehouse.in/embed/channel/'+(id? id[1]:''),
-						'allowfullscreen': 'true',
-						'style': {
-							'width': '100%',
-							'height': '100%'
-						}
-					});
-				else
-					return $.tag('iframe',{
-						'src': 'data:text/html,尚不支援記錄！',
-						'style': {
-							'width': '100%',
-							'height': '100%'
-						}
-					});
-			},
-			'twitch': function(path){
-				var id=path.match(/^([a-zA-Z0-9_-]+)/);
+			'livehouse': function(url,unCheckDomain){
+				var data=url.match(/^(https:\/\/livehouse\.in\/)channel\/([a-zA-Z0-9_-]+)/);
+				if(!data || !(data[1] || unCheckDomain)) return false;
 				return $.tag('iframe',{
-					'src': 'http://www.twitch.tv/'+id[1]+'/chat',
+					'src': 'https://livehouse.in/embed/channel/'+data[2],
 					'allowfullscreen': 'true',
 					'style': {
 						'width': '100%',
@@ -33,17 +13,21 @@
 					}
 				});
 			},
-			'ustream': function(path){
-				if(!/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+/.test(path)){
-					return $.tag('iframe',{
-						'src': 'data:text/html,not support',
-						'style': {
-							'width': '100%',
-							'height': '100%',
-							'background': '#FFF'
-						}
-					});
-				}
+			'twitch': function(url,unCheckDomain){
+				var data=url.match(/^(http:\/\/(?:www\.)?twitch\.tv\/)([a-zA-Z0-9_-]+)/);
+				if(!data || !(data[1] || unCheckDomain)) return false;
+				return $.tag('iframe',{
+					'src': 'http://www.twitch.tv/'+data[2]+'/chat',
+					'allowfullscreen': 'true',
+					'style': {
+						'width': '100%',
+						'height': '100%'
+					}
+				});
+			},
+			'ustream': function(url,unCheckDomain){
+				var data=url.match(/^(http:\/\/(?:www.)?ustream.tv\/)((channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+)/);
+				if(!data || !(data[1] || unCheckDomain)) return false;
 				var tag=$.tag('iframe',{
 					'src': 'data:text/html,Loading...',
 					'style': {
@@ -52,32 +36,37 @@
 						'background': '#FFF'
 					}
 				});
-				var checkIdOnly=path.match(/^(channel\/)?(\d+)/);
-				if(checkIdOnly){
-					tag.src='http://www.ustream.tv/socialstream/'+checkIdOnly[2]+'?siteMode=1?activeTab=socialStream&hideVideoTab=1&colorScheme=light&v=6';
+				if(data[3] && !Number.isNaN(parseInt(data[4],10))){
+					tag.src='http://www.ustream.tv/socialstream/'+data[4]+'?siteMode=1?activeTab=socialStream&hideVideoTab=1&colorScheme=light&v=6';
 					return tag;
 				}
 				new Ajax('POST','http://g8v-a0000778.rhcloud.com/getSourceId',{
 					'source': 'ustream',
-					'path': path.match(/^(channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+/)[0]
+					'path': data[2]
 				}).on('load',function(){
 					tag.src=this.result()? 'http://www.ustream.tv/socialstream/'+this.result()+'?siteMode=1?activeTab=socialStream&hideVideoTab=1&colorScheme=light&v=6':'data:text/html,Load Failed.';
 				}).send();
 				return tag;
 			}
 		},
-		'load': function(source,path,title,left,top,width,height){
-			if(!this.source[source]) return false;
+		'load': function(source,data,title,left,top,width,height){
+			var content;
+			if(!source){
+				for(source in this.source){
+					if(content=this.source[source](data)) break;
+				}
+				if(!content) return false;
+			}else if(!this.source[source]) return false;
 			var obj=g8v.createObj(
 				'chat',
-				[source,path],
+				[source,data],
 				title? title:source,
 				left? left:0,
 				top? top:0,
 				width? width:400,
 				height? height:600
 			);
-			g8v.createWindow(obj,title,this.source[source](path));
+			g8v.createWindow(obj,title,content? content:this.source[source](data,true));
 			g8v.updateShareUrl();
 			return obj;
 		}
@@ -89,9 +78,9 @@
 	;
 	form.addEventListener('submit',function(e){
 		e.preventDefault();
-		var url=e.target.querySelector('[name=url]').value.match(/^(http(s)?:\/\/)?([a-zA-Z0-9-]+\.)?([a-zA-Z0-9-]+)(\.[a-zA-Z0-9-]+)+\/(.+)/);
+		var url=e.target.querySelector('[name=url]').value;
 		e.target.querySelector('[name=url]').value='';
-		if(chat.load(url[4],url[6],url[4])===false) alert('網址格式錯誤或不支援的格式！');
+		if(chat.load(undefined,url)===false) alert('網址格式錯誤或不支援的格式！');
 	});
 	g8v.module.config.addItem(form);
 	g8v.module.chat=chat;
