@@ -189,7 +189,7 @@
 					'action': 'move',
 					'name': name,
 					'pos': mark.pos,
-					'module': mark.mod,
+					'module': mark.module,
 					'args': mark.args
 				}));
 		};
