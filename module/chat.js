@@ -1,6 +1,18 @@
 (function(){
 	var chat={
 		'source': {
+			'irc': function(url){
+				var data=url.match(/^irc(s)?:(?:\/\/?)?([^:\/]+)(?::(\d+))?(?:(?:\/)([^\?]*)(?:(?:\?)(.*))?)?$/);
+				if(!data) return false;
+				return $.tag('iframe',{
+					'src': 'https://kiwiirc.com/client/'+encodeURIComponent(data[0])+'?nick=test_?',
+					'style': {
+						'width': '100%',
+						'height': '100%',
+						'background': '#FFF'
+					}
+				});
+			},
 			'livehouse': function(url,unCheckDomain){
 				var data=url.match(/^(https:\/\/livehouse\.in\/)channel\/([a-zA-Z0-9_-]+)/);
 				if(!data || !(data[1] || unCheckDomain)) return false;
@@ -73,7 +85,7 @@
 	};
 	var form=$.tag('form')
 		.$add(document.createTextNode('新增聊天：'),null,true)
-		.$add('input',{'type':'input','name':'url','placeholder':'輸入直播瀏覽頁網址'},null,true)
+		.$add('input',{'type':'input','name':'url','placeholder':'直播網址、IRC...'},null,true)
 		.$add('input',{'type':'submit','value':'新增'},null,true)
 	;
 	form.addEventListener('submit',function(e){
