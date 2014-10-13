@@ -61,7 +61,7 @@ var g8v={
 			g8v.updateShareUrl();
 		});
 		vw.on('close',function(){
-			this.objList.splice(this.objList.indexOf(obj));
+			this.objList.splice(this.objList.indexOf(obj),1);
 			g8v.updateShareUrl();
 		}.bind(this));
 		obj.vw=vw;
