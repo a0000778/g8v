@@ -12,6 +12,25 @@ var g8v={
 		},
 		function(obj){
 			return $.tag('span',{
+				'textContent': '重',
+				'addEventListener': ['click',function(){
+					obj.vw.close(true);
+					var mod=g8v.module[obj.module];
+					var newObj=mod.load.apply(mod,obj.args.concat([obj.title,obj.posX,obj.posY,obj.width,obj.height]));
+					if(newObj){
+						obj.append.forEach(function(objAppend){
+							var module=this[objAppend.module];
+							if(module && module.append)
+								module.append.apply(module,[newObj].concat(objAppend.args));
+						},g8v.module);
+					}
+					newObj=obj=mod=undefined;
+					delete newObj,obj,mod;
+				}]
+			});
+		},
+		function(obj){
+			return $.tag('span',{
 				'textContent': '標',
 				'addEventListener': ['click',function(e){
 					var newtitle=prompt('請輸入新標題',obj.title);
