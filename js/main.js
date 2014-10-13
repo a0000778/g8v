@@ -2,6 +2,7 @@ var g8v={
 	'objList': [],
 	'module': {},
 	'bgLayer': 0,
+	'topLayer': 2000000000,
 	'windowOption': [
 		function(){
 			return $.tag('span',{
@@ -60,7 +61,7 @@ var g8v={
 			g8v.updateShareUrl();
 		});
 		vw.on('close',function(){
-			this.objList.splice(this.objList.indexOf(obj));
+			this.objList.splice(this.objList.indexOf(obj),1);
 			g8v.updateShareUrl();
 		}.bind(this));
 		obj.vw=vw;
@@ -307,9 +308,9 @@ addEventListener('load',function(){
 						}
 					},g8v.module);
 				}else if(!module){
-					console.error('[load]模組 %s 不存在',data.module);
+					console.error('[load]模組 %s 不存在',objData.module);
 				}else{
-					console.error('[load]模組 %s 不支援 load 方法',data.module);
+					console.error('[load]模組 %s 不支援 load 方法',objData.module);
 				}
 			},g8v);
 			if(!g8v.objList.length)

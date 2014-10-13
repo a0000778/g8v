@@ -111,7 +111,8 @@ VirtualWindow.prototype.disableSelect=function(e){
 }
 VirtualWindow.prototype.dragStart=function(e){
 	e.stopPropagation();
-	this.obj.style.zIndex=2147483647;
+	this.toTop();
+	this.obj.classList.add('draging');
 	this.barDownX=e.clientX-this.posX;
 	this.barDownY=e.clientY-this.posY;
 	VirtualWindow.consoleLayer.style.display='block';
@@ -128,10 +129,10 @@ VirtualWindow.prototype.dragEnd=function(e){
 	e.stopPropagation();
 	this.barDownX=null;
 	this.barDownY=null;
-	this.toTop();
 	window.removeEventListener('mousemove',this.dragMove);
 	document.removeEventListener('selectstart',this.disableSelect);
 	VirtualWindow.consoleLayer.style.display='none';
+	this.obj.classList.remove('draging');
 	this.trigger('dragEnd');
 }
 VirtualWindow.prototype.resizeStart=function(e){
@@ -198,7 +199,7 @@ window.addEventListener('load',function(){
 		'left': 0,
 		'right': 0,
 		'bottom': 0,
-		'zIndex': 2147483646,
+		'zIndex': 2147483647,
 		'display': 'none'
 	}})
 });
