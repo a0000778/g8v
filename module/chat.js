@@ -14,7 +14,7 @@
 				});
 			},
 			'livehouse': function(url,unCheckDomain){
-				var data=url.match(/^(https:\/\/livehouse\.in\/)channel\/([a-zA-Z0-9_-]+)/);
+				var data=url.match(/^(https:\/\/livehouse\.in\/)?channel\/([a-zA-Z0-9_-]+)/);
 				if(!data || !(data[1] || unCheckDomain)) return false;
 				return $.tag('iframe',{
 					'src': 'https://livehouse.in/embed/channel/'+data[2],
@@ -26,7 +26,7 @@
 				});
 			},
 			'twitch': function(url,unCheckDomain){
-				var data=url.match(/^(http:\/\/(?:www\.)?twitch\.tv\/)([a-zA-Z0-9_-]+)/);
+				var data=url.match(/^(http:\/\/(?:www\.)?twitch\.tv\/)?([a-zA-Z0-9_-]+)/);
 				if(!data || !(data[1] || unCheckDomain)) return false;
 				return $.tag('iframe',{
 					'src': 'http://www.twitch.tv/'+data[2]+'/chat',
@@ -38,7 +38,7 @@
 				});
 			},
 			'ustream': function(url,unCheckDomain){
-				var data=url.match(/^(http:\/\/(?:www.)?ustream.tv\/)((channel\/)?([-+_~.\d\w]|%[a-fA-F\d]{2})+)/);
+				var data=url.match(/^(http:\/\/(?:www.)?ustream.tv\/)?((?:(channel|recorded)\/)?((?:[-+_~.\d\w]|%[a-fA-F\d]{2})+))/);
 				if(!data || !(data[1] || unCheckDomain)) return false;
 				var tag=$.tag('iframe',{
 					'src': 'data:text/html,Loading...',
@@ -48,7 +48,7 @@
 						'background': '#FFF'
 					}
 				});
-				if(data[3] && !Number.isNaN(parseInt(data[4],10))){
+				if(data[3]==='channel' && !Number.isNaN(parseInt(data[4],10))){
 					tag.src='http://www.ustream.tv/socialstream/'+data[4]+'?siteMode=1?activeTab=socialStream&hideVideoTab=1&colorScheme=light&v=6';
 					return tag;
 				}
