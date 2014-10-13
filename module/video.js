@@ -90,7 +90,7 @@
 				var id=path.match(/(\?|&)v=([a-zA-Z0-9_-]+)/);
 				var list=path.match(/(\?|&)list=([a-zA-Z0-9_-]+)/);
 				return $.tag('iframe',{
-					'src': 'http://www.youtube.com/embed/'+(id? id[2]:'')+(list? '?list='+list[2]:''),
+					'src': 'http://www.youtube.com/embed/'+(id? id[2]:'')+'?rel=0&showinfo=0&autoplay=1'+(list? '&list='+list[2]:''),
 					'allowfullscreen': 'true',
 					'style': {
 						'width': '100%',
