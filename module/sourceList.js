@@ -59,8 +59,8 @@
 	form.addEventListener('submit',function(e){
 		e.preventDefault();
 		var code=e.target.querySelector('[name=code]');
+		if(sourceList.load(code.value)===false) alert('網址格式錯誤或不支援的格式！');
 		code.value='';
-		if(sourceList.load(code)===false) alert('網址格式錯誤或不支援的格式！');
 	});
 	g8v.module.config.addItem(form);
 	g8v.module.sourceList={
