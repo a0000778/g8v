@@ -92,7 +92,70 @@
 						'height': '100%'
 					}
 				});
-			}
+			},
+			'url': (function(){
+				var protocolList=['http','https','ftp','rtmp'];
+				var typeList={
+					'flv': 'video/x-flv',
+					'mkv': 'video/x-matroska',
+					'mp4': 'video/mp4',
+					'mov': 'video/mp4',
+					'ogv': 'video/ogg',
+					'webm': 'video/webm',
+					'3gpp': 'video/3gpp',
+					'm3u8': 'application/x-mpegurl'
+				};
+				var video=$.tag('video');
+				var getType=function(url){
+					var ext=url.match(/^.+\.([a-zA-Z0-9]+)(?:$|\?(?:.+)?)/);
+					type=ext && typeList[ext[1]];
+					var protocol=url.substring(0,url.indexOf('://'));
+					if(!protocol || protocolList.indexOf(protocol.toLowerCase())===-1) return null;
+					if(protocol=='rtmp')
+						return (type && type.replace('video/','rtmp/')) || 'rtmp';
+					return type;
+				}
+				return function(url){
+					var type=getType(url);
+					if(video.canPlayType(type)=='probably'){
+						var ele=$.tag('video',{
+							'autoplay': true,
+							'controls': true,
+							'preload': 'auto',
+							'style': {
+								'backgroundColor': '#000',
+								'width': '100%',
+								'height': '100%'
+							}
+						});
+						ele.$add('source',{'src': url});
+					}else{
+						var args={
+							'src': url,
+							'autoPlay': true,
+							'plugin_hls': 'plugin/flashls/flashlsOSMF.swf'
+						};
+						var argsArray=[];
+						for(var key in args){
+							argsArray.push(encodeURIComponent(key)+'='+encodeURIComponent(args[key]));
+						}
+						var ele=$.tag('object',{
+							'type':'application/x-shockwave-flash',
+							'data':'plugin/GrindPlayer.swf',
+							'style': {
+								'backgroundColor': '#000',
+								'width': '100%',
+								'height': '100%'
+							}
+						})
+							.$add('param',{'name':'allowFullScreen','value':'true'},null,true)
+							.$add('param',{'name':'wmode','value':'direct'},null,true)
+							.$add('param',{'name':'flashvars','value':argsArray.join('&')},null,true)
+						;
+					}
+					return ele;
+				};
+			})()
 		},
 		'load': function(source,data,title,left,top,width,height){
 			var content;
@@ -118,7 +181,7 @@
 	};
 	var form=$.tag('form')
 		.$add(document.createTextNode('新增畫面：'),null,true)
-		.$add('input',{'type':'input','name':'url','placeholder':'直播網址'},null,true)
+		.$add('input',{'type':'input','name':'url','placeholder':'直播、串流網址...'},null,true)
 		.$add('input',{'type':'submit','value':'新增'},null,true)
 	;
 	form.addEventListener('submit',function(e){
