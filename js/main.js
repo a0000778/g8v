@@ -5,13 +5,13 @@ var g8v={
 	'topLayer': 2000000000,
 	'windowOption': [
 		function(){
-			return $.tag('span',{
+			return $.tag('li',{
 				'className': 'vw_close',
 				'textContent': 'X'
 			});
 		},
 		function(obj){
-			return $.tag('span',{
+			return $.tag('li',{
 				'textContent': '重',
 				'addEventListener': ['click',function(){
 					obj.vw.close(true);
@@ -30,7 +30,7 @@ var g8v={
 			});
 		},
 		function(obj){
-			return $.tag('span',{
+			return $.tag('li',{
 				'textContent': '標',
 				'addEventListener': ['click',function(e){
 					var newtitle=prompt('請輸入新標題',obj.title);
@@ -52,11 +52,12 @@ var g8v={
 		});
 		var titleObj=windowObj.$add('div',{'className': 'vw_bar'}).$add(document.createTextNode(title? title:obj.title));
 		windowObj.$add(
-			g8v.windowOption.reduceRight(
+			g8v.windowOption.reduce(
 				function(r,f){
-					return r.$add(f(obj),null,true);
+					r.$add(f(obj)).addEventListener('mousedown',function(e){e.stopPropagation();});
+					return r;
 				},
-				$.tag('div',{
+				$.tag('ul',{
 					'className': 'vw_option'
 				})
 			)
@@ -133,6 +134,7 @@ addEventListener('load',function(){
 		var configVW=$('setting_window');
 		var configVWObj=new VirtualWindow(configVW,0,0,350).close();
 		var addItemBefore=configVW.childNodes[4];
+		configVW.getElementsByClassName('vw_hide')[0].addEventListener('mousedown',function(e){e.stopPropagation();});
 		$('setting').addEventListener('click',function(){
 			configVWObj.open();
 			if(configVW.scrollWidth)
@@ -158,7 +160,8 @@ addEventListener('load',function(){
 	
 	/* Fix Overflow Window */
 	g8v.fixOverflow=(function(){
-		var vw=new VirtualWindow($('overflow_confirm'),0,0,400,300).close();
+		var vw=$('overflow_confirm');
+		var vwObj=new VirtualWindow(vw,0,0,400,300).close();
 		var select=$('overflow_action');
 		var browser=$('overflow_browser');
 		var getRange=function(){
@@ -197,14 +200,15 @@ addEventListener('load',function(){
 					//自動縮放：解析度問題，縮放處理
 					select.value='resize';
 				}
-				vw.open().moveTo(
+				vwObj.open().moveTo(
 					Math.floor((innerWidth-400)/2),
 					Math.floor((innerHeight-300)/2)
 				).toTop();
 			}else{
-				vw.close();
+				vwObj.close();
 			}
 		}
+		vw.getElementsByClassName('vw_hide')[0].addEventListener('mousedown',function(e){e.stopPropagation();});
 		return function(action){
 			if(!action){
 				check();
@@ -266,7 +270,7 @@ addEventListener('load',function(){
 					delete resizeX,resizeY,resize,range;
 				break;
 			}
-			vw.close();
+			vwObj.close();
 		};
 	})();
 	$('overflow_do').addEventListener('click',function(){

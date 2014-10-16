@@ -38,17 +38,24 @@
 		left: 5px;
 		right: 5px;
 	}
-	.window > .vw_option{
+	.window > ul.vw_option{
 		position: absolute;
 		right: 5px;
 		top: 5px;
 		display: none;
 		z-index: 1;
+		list-style: none;
+		padding: 0px;
+		margin: 0px;
 	}
-	.window:hover > .vw_option,.window.draging > .vw_option{
+	.window > ul.vw_option > li{
+		float: right;
+		vertical-align: bottom;
+	}
+	.window:hover > ul.vw_option,.window.draging > ul.vw_option{
 		display: block;
 	}
-	#setting,.window > .vw_option > span{
+	#setting,.window > ul.vw_option > li{
 		cursor: pointer;
 	}
 	#setting_window,#overflow_confirm{
@@ -65,17 +72,17 @@
 	<div id="setting" style="position:absolute;top:0px;left:0px;z-index:999;">選項</div>
 	<div id="setting_window" class="window">
 		<div class="vw_bar">選項</div>
-		<div class="vw_option">
-			<span class="vw_hide">X</span>
-		</div>
+		<ul class="vw_option">
+			<li class="vw_hide">X</li>
+		</ul>
 		分享：
 		<input type="input" id="seting_url" readonly>
 	</div>
 	<div id="overflow_confirm" class="window">
 		<div class="vw_bar">修正視窗溢位</div>
-		<div class="vw_option">
-			<span class="vw_hide">X</span>
-		</div>
+		<ul class="vw_option">
+			<li class="vw_hide">X</li>
+		</ul>
 		<p>目前的畫面大小超出了瀏覽器視窗大小，請選擇處理方法以顯示完整的畫面。</p>
 		<select id="overflow_action">
 			<option value="resize">自動縮放</option>

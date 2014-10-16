@@ -34,7 +34,7 @@
 		}
 	});
 	g8v.windowOption.push(function(obj){
-		return $.tag('span',{
+		return $.tag('li',{
 			'textContent': '大',
 			'addEventListener': ['click',function(){
 				bigScreen.append(obj);

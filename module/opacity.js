@@ -12,7 +12,7 @@
 		return opacityObj;
 	}
 	g8v.windowOption.push(function(obj){
-		return $.tag('span',{
+		return $.tag('li',{
 			'textContent': '透',
 			'addEventListener': ['click',function(){
 				var opacityData=getAppendData(obj);

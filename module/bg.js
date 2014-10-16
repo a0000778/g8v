@@ -218,7 +218,7 @@
 			waitMark=false;
 		};
 		g8v.windowOption.push(function(obj){
-			return $.tag('span',{
+			return $.tag('li',{
 				'textContent': '地',
 				'addEventListener': ['click',function(e){
 					switch(bg.mapStartMark(obj)){
