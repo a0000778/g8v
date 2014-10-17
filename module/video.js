@@ -2,8 +2,8 @@
 	var video={
 		'source': {
 			'livehouse': function(url,unCheckDomain){
-				//var data=url.match(/^(https:\/\/livehouse\.in\/)?channel\/([a-zA-Z0-9_-]+)(?:\/records\/([a-zA-Z0-9_-]{20}))$/);
-				var data=url.match(/^(https:\/\/livehouse\.in\/)?channel\/([a-zA-Z0-9_-]+)$/);
+				//var data=url.match(/^(https?:\/\/livehouse\.in\/)?channel\/([a-zA-Z0-9_-]+)(?:\/records\/([a-zA-Z0-9_-]{20}))$/);
+				var data=url.match(/^(https?:\/\/livehouse\.in\/)?channel\/([a-zA-Z0-9_-]+)$/);
 				if(!data || !(data[1] || unCheckDomain)) return false;
 				return $.tag('iframe',{
 					'src': 'https://livehouse.in/embed/channel/'+data[2],
@@ -46,7 +46,7 @@
 				}
 			},
 			'ustream': function(url,unCheckDomain){
-				var data=url.match(/^(http:\/\/(?:www.)?ustream.tv\/)?((?:(channel|recorded)\/)?((?:[-+_~.\d\w]|%[a-fA-F\d]{2})+))/);
+				var data=url.match(/^(https?:\/\/(?:www.)?ustream.tv\/)?((?:(channel|recorded)\/)?((?:[-+_~.\d\w]|%[a-fA-F\d]{2})+))/);
 				if(!data || !(data[1] || unCheckDomain)) return false;
 				if(data[3]==='recorded'){
 					return $.tag('iframe',{
@@ -80,7 +80,7 @@
 				return tag;
 			},
 			'youtube': function(url,unCheckDomain){
-				if(!(unCheckDomain || /^https:\/\/(?:www.)?youtube.com\/(watch|playlist)/.test(url))) return false;
+				if(!(unCheckDomain || /^https?:\/\/(?:www.)?youtube.com\/(watch|playlist)/.test(url))) return false;
 				var id=url.match(/(?:\?|&)v=([a-zA-Z0-9_-]+)(?:&|#|$)/);
 				var list=url.match(/(?:\?|&)list=([a-zA-Z0-9_-]+)(?:&|#|$)/);
 				if(!(id || list)) return false;
@@ -177,6 +177,9 @@
 			g8v.createWindow(obj,title,content? content:this.source[source](data,true));
 			g8v.updateShareUrl();
 			return obj;
+		},
+		'loadData': function(data){
+			return this.load(undefined,data);
 		}
 	};
 	var form=$.tag('form')
@@ -188,7 +191,7 @@
 		e.preventDefault();
 		var url=e.target.querySelector('[name=url]').value;
 		e.target.querySelector('[name=url]').value='';
-		if(video.load(undefined,url)===false) alert('網址格式錯誤或不支援的格式！');
+		if(video.loadData(url)===false) alert('網址格式錯誤或不支援的格式！');
 	});
 	g8v.module.config.addItem(form);
 	g8v.module.video=video;
