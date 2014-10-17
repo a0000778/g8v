@@ -14,7 +14,7 @@
 				});
 			},
 			'livehouse': function(url,unCheckDomain){
-				var data=url.match(/^(https:\/\/livehouse\.in\/)?channel\/([a-zA-Z0-9_-]+)/);
+				var data=url.match(/^(https?:\/\/livehouse\.in\/)?channel\/([a-zA-Z0-9_-]+)/);
 				if(!data || !(data[1] || unCheckDomain)) return false;
 				return $.tag('iframe',{
 					'src': 'https://livehouse.in/embed/channel/'+data[2],
@@ -38,7 +38,7 @@
 				});
 			},
 			'ustream': function(url,unCheckDomain){
-				var data=url.match(/^(http:\/\/(?:www.)?ustream.tv\/)?((?:(channel|recorded)\/)?((?:[-+_~.\d\w]|%[a-fA-F\d]{2})+))/);
+				var data=url.match(/^(https?:\/\/(?:www.)?ustream.tv\/)?((?:(channel|recorded)\/)?((?:[-+_~.\d\w]|%[a-fA-F\d]{2})+))/);
 				if(!data || !(data[1] || unCheckDomain)) return false;
 				var tag=$.tag('iframe',{
 					'src': 'data:text/html,Loading...',
