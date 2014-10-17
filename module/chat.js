@@ -81,6 +81,9 @@
 			g8v.createWindow(obj,title,content? content:this.source[source](data,true));
 			g8v.updateShareUrl();
 			return obj;
+		},
+		'loadData': function(data){
+			return this.load(undefined,data);
 		}
 	};
 	var form=$.tag('form')
@@ -92,7 +95,7 @@
 		e.preventDefault();
 		var url=e.target.querySelector('[name=url]').value;
 		e.target.querySelector('[name=url]').value='';
-		if(chat.load(undefined,url)===false) alert('網址格式錯誤或不支援的格式！');
+		if(chat.loadData(url)===false) alert('網址格式錯誤或不支援的格式！');
 	});
 	g8v.module.config.addItem(form);
 	g8v.module.chat=chat;
