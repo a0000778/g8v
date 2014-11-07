@@ -8,8 +8,8 @@
 		'className': 'window'
 	});
 	windowObj.$add('div',{'className':'vw_bar','textContent':'大畫面'});
-	windowObj.$add('div',{'className':'vw_option'})
-		.$add('span',{'className':'vw_hide','textContent':'X'})
+	windowObj.$add('ul',{'className':'vw_option'})
+		.$add('li',{'className':'vw_hide','textContent':'X'})
 	;
 	var VW=new VirtualWindow(windowObj,0,0,800,600)
 		.close()

@@ -47,6 +47,7 @@
 - `g8v.module.*.*` 模組 API
 - `g8v.module.*.load(args)` 從 url 載入的 API
 - `g8v.module.*.append(obj,args)` 從 url 載入的 API，針對現存功能再做附加功能操作
+- `g8v.module.*.loadData(data)` 等同從選項清單對模組操作
 - `g8v.objList` 當前物件列表
 - `g8v.updateShareUrl()` 刷新分享網址
 - `g8v.windowOption[*](obj)` 視窗附帶功能
