@@ -7,11 +7,13 @@ var g8v={
 		function(){
 			return $.tag('li',{
 				'className': 'vw_close ion-close-round',
+				'title': '關閉視窗'
 			});
 		},
 		function(obj){
 			return $.tag('li',{
 				'className': 'ion-loop',
+				'title': '重新整理',
 				'addEventListener': ['click',function(){
 					obj.vw.close(true);
 					var mod=g8v.module[obj.module];
@@ -31,6 +33,7 @@ var g8v={
 		function(obj){
 			return $.tag('li',{
 				'className': 'ion-ios7-pricetag',
+				'title': '修改標題',
 				'addEventListener': ['click',function(e){
 					var newtitle=prompt('請輸入新標題',obj.title);
 					if(newtitle===null) return;

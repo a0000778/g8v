@@ -58,6 +58,9 @@
 		vertical-align: middle;
 		font-size: 18px;
 	}
+	.window > ul.vw_option > li.vw_close,.window > ul.vw_option > li.vw_hide{
+		margin-left: 10px;
+	}
 	.window:hover > ul.vw_option,.window.draging > ul.vw_option{
 		display: block;
 	}
@@ -80,7 +83,7 @@
 	<div id="setting_window" class="window">
 		<div class="vw_bar">選項</div>
 		<ul class="vw_option">
-			<li class="vw_hide ion-close-round"></li>
+			<li class="vw_hide ion-close-round" title="關閉視窗"></li>
 		</ul>
 		分享：
 		<input type="input" id="seting_url" readonly>
@@ -88,7 +91,7 @@
 	<div id="overflow_confirm" class="window">
 		<div class="vw_bar">修正視窗溢位</div>
 		<ul class="vw_option">
-			<li class="vw_hide ion-close-round"></li>
+			<li class="vw_hide ion-close-round" title="關閉視窗"></li>
 		</ul>
 		<p>目前的畫面大小超出了瀏覽器視窗大小，請選擇處理方法以顯示完整的畫面。</p>
 		<select id="overflow_action">
