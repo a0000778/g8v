@@ -14,6 +14,7 @@
 	g8v.windowOption.push(function(obj){
 		return $.tag('li',{
 			'className': 'ion-contrast',
+			'title': '視窗透明度',
 			'addEventListener': ['click',function(){
 				var opacityData=getAppendData(obj);
 				var opacity=opacityData.args[0];
