@@ -9,7 +9,7 @@
 	});
 	windowObj.$add('div',{'className':'vw_bar','textContent':'大畫面'});
 	windowObj.$add('ul',{'className':'vw_option'})
-		.$add('li',{'className':'vw_hide','textContent':'X'})
+		.$add('li',{'className':'vw_hide ion-close-round'})
 	;
 	var VW=new VirtualWindow(windowObj,0,0,800,600)
 		.close()
@@ -35,7 +35,7 @@
 	});
 	g8v.windowOption.push(function(obj){
 		return $.tag('li',{
-			'textContent': '大',
+			'className': 'ion-ios7-albums',
 			'addEventListener': ['click',function(){
 				bigScreen.append(obj);
 			}]

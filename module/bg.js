@@ -219,7 +219,7 @@
 		};
 		g8v.windowOption.push(function(obj){
 			return $.tag('li',{
-				'textContent': '地',
+				'className': 'ion-location',
 				'addEventListener': ['click',function(e){
 					switch(bg.mapStartMark(obj)){
 						case false: alert('其他項目正在標記中'); break;
