@@ -13,7 +13,7 @@
 	}
 	g8v.windowOption.push(function(obj){
 		return $.tag('li',{
-			'textContent': '透',
+			'className': 'ion-contrast',
 			'addEventListener': ['click',function(){
 				var opacityData=getAppendData(obj);
 				var opacity=opacityData.args[0];

@@ -51,6 +51,12 @@
 	.window > ul.vw_option > li{
 		float: right;
 		vertical-align: bottom;
+		display: block;
+		width: 18px;
+		height: 18px;
+		text-align: center;
+		vertical-align: middle;
+		font-size: 18px;
 	}
 	.window:hover > ul.vw_option,.window.draging > ul.vw_option{
 		display: block;
@@ -67,13 +73,14 @@
 	}
 	</style>
 	<link type="text/css" rel="stylesheet" href="plugin/openLayers.css">
+	<link type="text/css" rel="stylesheet" href="http://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
 </head>
 <body>
-	<div id="setting" style="position:absolute;top:0px;left:0px;z-index:999;">選項</div>
+	<div id="setting" class="ion-settings" style="position:absolute;top:0px;left:0px;z-index:999;"></div>
 	<div id="setting_window" class="window">
 		<div class="vw_bar">選項</div>
 		<ul class="vw_option">
-			<li class="vw_hide">X</li>
+			<li class="vw_hide ion-close-round"></li>
 		</ul>
 		分享：
 		<input type="input" id="seting_url" readonly>
@@ -81,7 +88,7 @@
 	<div id="overflow_confirm" class="window">
 		<div class="vw_bar">修正視窗溢位</div>
 		<ul class="vw_option">
-			<li class="vw_hide">X</li>
+			<li class="vw_hide ion-close-round"></li>
 		</ul>
 		<p>目前的畫面大小超出了瀏覽器視窗大小，請選擇處理方法以顯示完整的畫面。</p>
 		<select id="overflow_action">
