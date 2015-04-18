@@ -108,7 +108,7 @@ var g8v={
 		return data;
 	},
 	'updateShareUrl': function(){
-		$('seting_url').value=location.origin+location.pathname+'#'+this.objList.reduce(function(r,v){
+		$('setting_url').value=location.origin+location.pathname+'#'+this.objList.reduce(function(r,v){
 			return r+
 				(r.length? '&':'')+v.module+'='+v.args.reduce(function(r,v){
 					return r+(r.length? '|':'')+encodeURIComponent(v);
@@ -158,7 +158,7 @@ addEventListener('load',function(){
 			}
 		};
 	})();
-	$('seting_url').addEventListener('click',function(){this.select();});
+	$('setting_url').addEventListener('click',function(){this.select();});
 	
 	/* Fix Overflow Window */
 	g8v.fixOverflow=(function(){
