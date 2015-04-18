@@ -128,6 +128,22 @@ var g8v={
 					''
 				);
 		},'');
+	},
+	'shortenShareUrl': function(){
+		var buttonOldValue=$('setting_urlShorten').value;
+		$('setting_urlShorten').value='縮短中...';
+		$('setting_urlShorten').disabled=true;
+		new Ajax('POST','http://g8v-a0000778.rhcloud.com/urlShorten',{
+			'url': $('setting_url').value
+		}).on('load',function(){
+			$('setting_urlShorten').value=buttonOldValue;
+			$('setting_urlShorten').disabled=false;
+			if(Math.floor(this.xhr.status/200)!==1){
+				alert('網址縮短失敗！');
+				return;
+			}
+			$('setting_url').value=this.result();
+		}).send();
 	}
 };
 addEventListener('load',function(){
@@ -159,6 +175,7 @@ addEventListener('load',function(){
 		};
 	})();
 	$('setting_url').addEventListener('click',function(){this.select();});
+	$('setting_urlShorten').addEventListener('click',function(){g8v.shortenShareUrl();});
 	
 	/* Fix Overflow Window */
 	g8v.fixOverflow=(function(){
