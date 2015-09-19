@@ -3,112 +3,76 @@
 <head>
 	<meta charset="utf-8">
 	<title>G8V.TV 電視牆</title>
+	<link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+	<link type="text/css" rel="stylesheet" href="plugin/openLayers.css">
+	<link type="text/css" rel="stylesheet" href="style.css">
 	<script src="js/common.js"></script>
-	<script src="js/taskStep.js"></script>
 	<script src="js/VirtualWindow.js"></script>
 	<script src="plugin/csvToArray.js"></script>
 	<script src="plugin/openLayers.js"></script>
+	<!--Normal,Firefox will get error-->
 	<script src="js/main.js"></script>
-	<style>
-	body{
-		margin: 0px;
-		overflow: hidden;
-	}
-	iframe{
-		border: 0px
-	}
-	.window{
-		overflow: hidden;
-		margin: 5px;
-	}
-	.window:hover,.window.draging{
-		margin: 0px;
-		border: 1px solid #000;
-		padding: 4px;
-	}
-	.window > .vw_bar{
-		background-color: #DDD;
-		display: none;
-		z-index: 1;
-	}
-	.window:hover > .vw_bar,.window.draging > .vw_bar{
-		display: block;
-		position: absolute;
-		top: 5px;
-		left: 5px;
-		right: 5px;
-	}
-	.window > ul.vw_option{
-		position: absolute;
-		right: 5px;
-		top: 5px;
-		display: none;
-		z-index: 1;
-		list-style: none;
-		padding: 0px;
-		margin: 0px;
-	}
-	.window > ul.vw_option > li{
-		float: right;
-		vertical-align: bottom;
-		display: block;
-		width: 18px;
-		height: 18px;
-		text-align: center;
-		vertical-align: middle;
-		font-size: 18px;
-	}
-	.window > ul.vw_option > li.vw_close,.window > ul.vw_option > li.vw_hide{
-		margin-left: 10px;
-	}
-	.window:hover > ul.vw_option,.window.draging > ul.vw_option{
-		display: block;
-	}
-	#setting,.window > ul.vw_option > li{
-		cursor: pointer;
-	}
-	#setting_window,#overflow_confirm{
-		background-color: #FFF;
-	}
-	#setting_window > .vw_bar,#overflow_confirm > .vw_bar{
-		display: block;
-		position: static;
-	}
-	</style>
-	<link type="text/css" rel="stylesheet" href="plugin/openLayers.css">
-	<link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css">
+	<!--for Firefox-->
+	<script src="js/main_firefox.js" type="text/javascript;version=1.7"></script>
 </head>
 <body>
-	<div id="setting" class="ion-settings" style="position:absolute;top:0px;left:0px;z-index:999;"></div>
-	<div id="setting_window" class="window">
-		<div class="vw_bar">選項</div>
-		<ul class="vw_option">
-			<li class="vw_hide ion-close-round" title="關閉視窗"></li>
+	<div id="control">
+		<ul class="top">
+			<li class="ion-social-youtube" title="新增畫面">
+				<div>
+					<input type="input">
+					<button class="ion-android-add" title="添加"></button>
+				</div>
+			</li>
+			<li class="ion-ios-chatboxes" title="新增聊天">
+				<div>
+					<input type="input">
+					<button class="ion-android-add" title="添加"></button>
+				</div>
+			</li>
+			<li class="ion-ios-list" title="新增來源清單">
+				<div>
+					<input type="input">
+					<button class="ion-android-add" title="添加"></button>
+				</div>
+			</li>
+			<li class="ion-ios-monitor" title="新增頁面">
+				<div>
+					<input type="input">
+					<button class="ion-android-add" title="添加"></button>
+				</div>
+			</li>
+			<li class="ion-image" title="設定背景">
+				<div>
+					<input type="input">
+					<button class="ion-android-done" title="設定"></button>
+				</div>
+			</li>
 		</ul>
-		分享：
-		<input type="input" id="setting_url" readonly>
-		<input type="button" id="setting_urlShorten" value="縮短">
+		<ul class="bottom"></ul>
 	</div>
 	<div id="overflow_confirm" class="window">
 		<div class="vw_bar">修正視窗溢位</div>
 		<ul class="vw_option">
 			<li class="vw_hide ion-close-round" title="關閉視窗"></li>
 		</ul>
-		<p>目前的畫面大小超出了瀏覽器視窗大小，請選擇處理方法以顯示完整的畫面。</p>
-		<select id="overflow_action">
-			<option value="resize">自動縮放</option>
-			<option value="move">自動搬移</option>
-			<option value="moveInDisplay" selected>移動到可視範圍</option>
-			<option value="notthing">不處理</option>
-		</select>
-		<button id="overflow_do">處理</button>
-		<p id="overflow_browser">當前瀏覽器過小，放大視窗可解決此問題</p>
-		<p>
-			自動縮放：等比例縮放直到符合瀏覽器視窗大小<br>
-			自動搬移：自動移動視窗至合適的空白區域<br>
-			移動到可視範圍：只移動超出瀏覽器的視窗至可視範圍內<br>
-			不處理：不做任何處理
-		</p>
+		<div class="content">
+			<p>目前的畫面大小超出了瀏覽器視窗大小，請選擇處理方法以顯示完整的畫面。</p>
+			<select id="overflow_action">
+				<option value="resize">自動縮放</option>
+				<option value="move">自動搬移</option>
+				<option value="moveInDisplay" selected>移動到可視範圍</option>
+				<option value="notthing">不處理</option>
+			</select>
+			<button id="overflow_do">處理</button>
+			<p id="overflow_browser">當前瀏覽器過小，放大視窗可解決此問題</p>
+			<p>
+				自動縮放：等比例縮放直到符合瀏覽器視窗大小<br>
+				自動搬移：自動移動視窗至合適的空白區域<br>
+				移動到可視範圍：只移動超出瀏覽器的視窗至可視範圍內<br>
+				不處理：不做任何處理
+			</p>
+		</div>
 	</div>
 </body>
 </html>
