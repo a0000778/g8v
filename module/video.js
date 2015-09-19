@@ -150,7 +150,7 @@
 							}
 						});
 						ele.$add('source',{'src': url});
-					}else{
+					}else if(type){
 						var args={
 							'src': url,
 							'autoPlay': true,
