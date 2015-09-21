@@ -296,10 +296,34 @@
 	);
 }
 {//核心模組: 視窗溢位
+	const minSize=30;//限制最小視窗邊長，防止用於攻擊
 	let vwObj,select,browser;
 	
-	g8v.WindowItem.afterCreate.push((item) => {
-		item.vw.on('resizeEnd',check).on('dragEnd',check).on('open',check);
+	g8v.loading('fixWindowOverflow');
+	g8v.WindowItem.afterCreate.push(function(item){
+		if(item.width<minSize) item.width=minSize;
+		if(item.height<minSize) item.height=minSize;
+		item.vw
+			.on('resize',() => {
+				if(item.width<minSize) item.width=minSize;
+				if(item.height<minSize) item.height=minSize;
+			})
+			.on('resizeBefore',(e,updateInfo) => {
+				if(updateInfo.width<minSize){
+					if(updateInfo.wMode==='left')
+						updateInfo.posX+=updateInfo.width-minSize;
+					updateInfo.width=minSize;
+				}
+				if(updateInfo.height<minSize){
+					if(updateInfo.hMode==='top')
+						updateInfo.posY+=updateInfo.height-minSize;
+					updateInfo.height=minSize;
+				}
+			})
+			.on('resizeEnd',check)
+			.on('dragEnd',check)
+			.on('open',check)
+		;
 	});
 	window.addEventListener('load',function(){
 		vwObj=new VirtualWindow($('overflow_confirm'),0,0,400,300).close();
