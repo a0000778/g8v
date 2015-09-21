@@ -13,6 +13,48 @@
 	let topLayer=1000000000;
 	let controlTop=null;
 	let controlBottom=null;
+	{//載入步驟控制
+		let waitLoad=new Set();
+		let onLoad=new Map();
+		let emitOnLoad=false;
+		
+		window.addEventListener('load',() => {
+			emitOnLoad=true;
+		});
+		g8v.loading=function(modName){
+			waitLoad.add(modName);
+			console.log('[G8V] 正在載入模組 %s ...',modName);
+		}
+		g8v.loaded=function(modName){
+			if(!waitLoad.has(modName)) throw new Error('未知的載入中項目 '+modName);
+			waitLoad.delete(modName);
+			console.log('[G8V] 模組 %s 載入完畢，觸發相關事件 ...',modName);
+			onLoad.has(modName) && onLoad.get(modName).forEach((func) => func());
+			onLoad.set(modName,null);
+			console.log('[G8V] 模組 %s 載入完畢，相關事件觸發完畢',modName);
+			if(emitOnLoad && !waitLoad.size){
+				console.log('[G8V] 所有模組載入完畢，觸發 onLoad ...');
+				onLoad.get().forEach((func) => func());
+				onLoad.set(undefined,null);
+				emitOnLoad=false;
+				console.log('[G8V] onLoad 觸發完畢，載入完畢！');
+			}
+		}
+		g8v.onLoad=function(modName,func){
+			if(!func){
+				func=modName;
+				modName=undefined;
+			}
+			if(!onLoad.has(modName))
+				onLoad.set(modName,[]);
+			let onLoad_mod=onLoad.get(modName);
+			if(onLoad_mod===null)
+				func();
+			else
+				onLoad_mod.push(func);
+		}
+		g8v.loading('g8v');
+	}
 	{//介接各種變數供模組使用
 		window.g8v=g8v;
 		Object.defineProperty(g8v,'bgLayer',{
@@ -50,6 +92,7 @@
 	window.addEventListener('load',function(){
 		controlTop=document.querySelector('#control .top');
 		controlBottom=document.querySelector('#control .bottom');
+		g8v.loaded('g8v');
 	});
 
 	function AppendItem(module,args){
@@ -258,7 +301,6 @@
 	g8v.WindowItem.afterCreate.push((item) => {
 		item.vw.on('resizeEnd',check).on('dragEnd',check).on('open',check);
 	});
-	window.addEventListener('resize',check);
 	window.addEventListener('load',function(){
 		vwObj=new VirtualWindow($('overflow_confirm'),0,0,400,300).close();
 		document.querySelector('#overflow_confirm .vw_hide')
@@ -267,6 +309,8 @@
 		select=$('overflow_action');
 		browser=$('overflow_browser');
 		$('overflow_do').addEventListener('click',() => fixOverflow(select.value));
+		window.addEventListener('resize',check);
+		g8v.loaded('fixWindowOverflow');
 	});
 	
 	function getRange(){
@@ -377,11 +421,12 @@
 {//核心模組: 分享
 	let shareUrlEle=$.tag('input',{'type':'input','readOnly':true});
 	
+	g8v.loading('shareUrl');
 	g8v.AppendItem.afterCreate.push(mountEvent);
 	g8v.ContentItem.afterCreate.push(mountEvent);
 	g8v.WindowItem.afterCreate.push(mountWindowEvent);
 	shareUrlEle.addEventListener('click',function(){this.select();});
-	window.addEventListener('load',function(){
+	g8v.onLoad('g8v',function(){
 		let control=$.tag('li',{
 			'className':'ion-share',
 			'title':'分享'
@@ -392,7 +437,9 @@
 			.addEventListener('click',shortShareUrl)
 		;
 		g8v.addControlBottom(control);
-		
+		g8v.loaded('shareUrl');
+	});
+	g8v.onLoad(() => {
 		if(location.hash.length>1){
 			let loadItem=location.hash.slice(1).split('&');
 			for(let itemInfo of loadItem){
