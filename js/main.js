@@ -296,6 +296,48 @@
 		}
 	);
 }
+{//核心模組: 排版功能強化
+	g8v.WindowItem.afterCreate.push(function(item){
+		let oldSize;
+		let siezScale;
+		item.vw
+			.on('resizeStart',() => {
+				oldSize={
+					'width': item.vw.width,
+					'height': item.vw.height
+				}
+				siezScale=item.vw.width/item.vw.height;
+			})
+			.on('resizeBefore',(e,updateInfo) => resizeBefore(item,oldSize,siezScale,e,updateInfo))
+		;
+	});
+	function resizeBefore(item,oldSize,siezScale,e,updateInfo){
+		if(e.shiftKey){//等比縮放
+			if(updateInfo.wMode && updateInfo.hMode){
+				let width=Math.floor(updateInfo.height*siezScale);
+				let height=Math.floor(updateInfo.width/siezScale);
+				let changeW=Math.abs(updateInfo.width-width);
+				let changeH=Math.abs(updateInfo.height-height);
+				if(updateInfo.wMode==='left' && changeW<changeH)
+					updateInfo.posX+=updateInfo.width-width;
+				if(updateInfo.hMode==='top' && changeW>=changeH)
+					updateInfo.posY+=updateInfo.height-height;
+				if(changeW<changeH)
+					updateInfo.width=width;
+				else
+					updateInfo.height=height;
+			}else if(updateInfo.wMode)
+				updateInfo.height=Math.floor(updateInfo.width/siezScale);
+			else if(updateInfo.hMode)
+				updateInfo.width=Math.floor(updateInfo.height*siezScale);
+		}else{//等比縮放中途取消的恢復步驟
+			if(updateInfo.width!==oldSize.width && !updateInfo.wMode)
+				updateInfo.width=oldSize.width;
+			if(updateInfo.height!==oldSize.height && !updateInfo.hMode)
+				updateInfo.height=oldSize.height;
+		}
+	}
+}
 {//核心模組: 視窗溢位
 	const minSize=30;//限制最小視窗邊長，防止用於攻擊
 	let vwObj,select,browser;
