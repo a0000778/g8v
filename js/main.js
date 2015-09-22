@@ -108,6 +108,7 @@
 	AppendItem.prototype._append=function(){}//請覆寫我
 	AppendItem.prototype._delete=function(){}//請覆寫我
 	AppendItem.prototype.append=function(contentItem){
+		if(this.contentItem) return;
 		this.contentItem=contentItem;
 		contentItem.append.push(this);
 		this._append();//交由各 append 模組實作生效步驟
