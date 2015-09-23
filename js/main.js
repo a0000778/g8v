@@ -297,10 +297,12 @@
 	);
 }
 {//核心模組: 排版功能強化
+	const fixMaxRange=10;//距離多少以內觸發貼齊
 	g8v.WindowItem.afterCreate.push(function(item){
 		let oldSize;
 		let siezScale;
 		item.vw
+			.on('dragBefore',(e,toPos) => dragBefore(item,e,toPos))
 			.on('resizeStart',() => {
 				oldSize={
 					'width': item.vw.width,
@@ -311,7 +313,144 @@
 			.on('resizeBefore',(e,updateInfo) => resizeBefore(item,oldSize,siezScale,e,updateInfo))
 		;
 	});
+	function dragBefore(item,e,toPos){
+		//自動貼齊
+		let xItem,xItemMode,yItem,yItemMode;
+		let xItemDist=fixMaxRange+1,yItemDist=fixMaxRange+1;
+		let xPCache=toPos.x+item.width;
+		let yPCache=toPos.y+item.height;
+		for(let checkItem of g8v.itemList){
+			if(checkItem===item || !checkItem.vw) continue;
+			let distX=[
+				Math.abs(toPos.x-checkItem.posX),//LeftLeft
+				Math.abs(toPos.x-checkItem.posX-checkItem.width),//LeftRight
+				Math.abs(xPCache-checkItem.posX),//RightLeft
+				Math.abs(xPCache-checkItem.posX-checkItem.width)//RightRight
+			];
+			let distY=[
+				Math.abs(toPos.y-checkItem.posY),//TopTop
+				Math.abs(toPos.y-checkItem.posY-checkItem.height),//TopBottom
+				Math.abs(yPCache-checkItem.posY),//BottomTop
+				Math.abs(yPCache-checkItem.posY-checkItem.height)//BottomBottom
+			];
+			let distXMin=Math.min.apply(Math,distX);
+			let distYMin=Math.min.apply(Math,distY);
+			if(distXMin<xItemDist){
+				xItem=checkItem;
+				xItemDist=distXMin;
+				xItemMode=distX.indexOf(distXMin);
+			}
+			if(distYMin<yItemDist){
+				yItem=checkItem;
+				yItemDist=distYMin;
+				yItemMode=distY.indexOf(distYMin);
+			}
+		}
+		switch(xItemMode){
+			case 0: toPos.x=xItem.posX; break;
+			case 1: toPos.x=xItem.posX+xItem.width; break;
+			case 2: toPos.x=xItem.posX-item.width; break;
+			case 3: toPos.x=xItem.posX+xItem.width-item.width; break;
+		}
+		switch(yItemMode){
+			case 0: toPos.y=yItem.posY; break;
+			case 1: toPos.y=yItem.posY+yItem.height; break;
+			case 2: toPos.y=yItem.posY-item.height; break;
+			case 3: toPos.y=yItem.posY+yItem.height-item.height; break;
+		}
+	}
 	function resizeBefore(item,oldSize,siezScale,e,updateInfo){
+		//自動貼齊
+		if(updateInfo.wMode==='left'){
+			let xItem,xItemMode;
+			let xItemDist=fixMaxRange+1;
+			for(let checkItem of g8v.itemList){
+				if(checkItem===item || !checkItem.vw) continue;
+				let distX=[
+					Math.abs(updateInfo.posX-checkItem.posX),
+					Math.abs(updateInfo.posX-checkItem.posX-checkItem.width)
+				];
+				let distXMin=Math.min.apply(Math,distX);
+				if(distXMin<xItemDist){
+					xItem=checkItem;
+					xItemDist=distX;
+					xItemMode=distX.indexOf(distXMin);
+				}
+			}
+			if(xItemMode===0){
+				updateInfo.width+=updateInfo.posX-xItem.posX;
+				updateInfo.posX=xItem.posX;
+			}else if(xItemMode===1){
+				updateInfo.width+=updateInfo.posX-xItem.posX-xItem.width;
+				updateInfo.posX=xItem.posX+xItem.width;
+			}
+		}else if(updateInfo.wMode==='right'){
+			let xItem,xItemMode;
+			let xItemDist=fixMaxRange+1;
+			let xPCache=updateInfo.posX+updateInfo.width;
+			for(let checkItem of g8v.itemList){
+				if(checkItem===item || !checkItem.vw) continue;
+				let distX=[
+					Math.abs(xPCache-checkItem.posX),
+					Math.abs(xPCache-checkItem.posX-checkItem.width)
+				];
+				let distXMin=Math.min.apply(Math,distX);
+				if(distXMin<xItemDist){
+					xItem=checkItem;
+					xItemDist=distX;
+					xItemMode=distX.indexOf(distXMin);
+				}
+			}
+			if(xItemMode===0)
+				updateInfo.width=xItem.posX-updateInfo.posX;
+			else if(xItemMode===1)
+				updateInfo.width=xItem.posX+xItem.width-updateInfo.posX;
+		}
+		if(updateInfo.hMode==='top'){
+			let yItem,yItemMode;
+			let yItemDist=fixMaxRange+1;
+			for(let checkItem of g8v.itemList){
+				if(checkItem===item || !checkItem.vw) continue;
+				let distY=[
+					Math.abs(updateInfo.posY-checkItem.posY),
+					Math.abs(updateInfo.posY-checkItem.posY-checkItem.height)
+				];
+				let distYMin=Math.min.apply(Math,distY);
+				if(distYMin<yItemDist){
+					yItem=checkItem;
+					yItemDist=distY;
+					yItemMode=distY.indexOf(distYMin);
+				}
+			}
+			if(yItemMode===0){
+				updateInfo.height+=updateInfo.posY-yItem.posY;
+				updateInfo.posY=yItem.posY;
+			}else if(yItemMode===1){
+				updateInfo.height+=updateInfo.posY-yItem.posY-yItem.height;
+				updateInfo.posY=yItem.posY+yItem.height;
+			}
+		}else if(updateInfo.hMode==='bottom'){
+			let yItem,yItemMode;
+			let yItemDist=fixMaxRange+1;
+			let yPCache=updateInfo.posY+updateInfo.height;
+			for(let checkItem of g8v.itemList){
+				if(checkItem===item || !checkItem.vw) continue;
+				let distY=[
+					Math.abs(yPCache-checkItem.posY),
+					Math.abs(yPCache-checkItem.posY-checkItem.height)
+				];
+				let distYMin=Math.min.apply(Math,distY);
+				if(distYMin<yItemDist){
+					yItem=checkItem;
+					yItemDist=distY;
+					yItemMode=distY.indexOf(distYMin);
+				}
+			}
+			if(yItemMode===0)
+				updateInfo.height=yItem.posY-updateInfo.posY;
+			else if(yItemMode===1)
+				updateInfo.height=yItem.posY+yItem.height-updateInfo.posY;
+		}
 		if(e.shiftKey){//等比縮放
 			if(updateInfo.wMode && updateInfo.hMode){
 				let width=Math.floor(updateInfo.height*siezScale);
