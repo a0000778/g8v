@@ -1,41 +1,55 @@
-(function(){
-	var iframe={
-		'load': function(url,title,left,top,width,height){
-			var obj=g8v.createObj(
-				'iframe',
-				[url],
-				title? title:'頁面',
-				left? left:0,
-				top? top:0,
-				width? width:400,
-				height? height:600
-			);
-			g8v.createWindow(obj,title,$.tag('iframe',{
+'use strict';
+/*
+	G8V Iframe Module by a0000778
+	MIT License
+*/
+{
+	g8v.loading('iframe');
+	g8v.module.set('iframe',{
+		'load': load,
+		'loadData': loadData
+	});
+	g8v.onLoad('g8v',function(){
+		let inputEle=$.tag('input',{'type':'input','name':'url','placeholder':'輸入目標頁面網址'});
+		let form=$.tag('form')
+			.$add(inputEle,undefined,true)
+			.$add('button',{'type':'submit','className':'ion-android-add','title':'新增'},undefined,true)
+		;
+		form.addEventListener('submit',function(e){
+			e.preventDefault();
+			loadData(inputEle.value);
+			form.reset();
+		});
+		let control=$.tag('li',{
+			'className':'ion-document-text',
+			'title':'新增頁面'
+		});
+		control.$add(form,undefined,true);
+		g8v.addControlTop(control);
+		g8v.loaded('iframe');
+	});
+	
+	function load(url,title,left,top,width,height){
+		new g8v.WindowItem(
+			'iframe',
+			[url],
+			title || 'iframe',
+			$.tag('iframe',{
 				'src': url,
 				'style': {
 					'width': '100%',
 					'height': '100%',
-					'background': '#FFF'
+					'background': '#FFF',
+					'border': 0
 				}
-			}));
-			g8v.updateShareUrl();
-			return obj;
-		},
-		'loadData': function(data){
-			return this.load(data);
-		}
-	};
-	var form=$.tag('form')
-		.$add(document.createTextNode('新增頁面：'),null,true)
-		.$add('input',{'type':'input','name':'url','placeholder':'輸入目標頁面網址'},null,true)
-		.$add('input',{'type':'submit','value':'新增'},null,true)
-	;
-	form.addEventListener('submit',function(e){
-		e.preventDefault();
-		var url=e.target.querySelector('[name=url]');
-		if(iframe.loadData(url.value)===false) alert('網址格式錯誤或不支援的格式！');
-		url.value='';
-	});
-	g8v.module.config.addItem(form);
-	g8v.module.iframe=iframe;
-})();
+			}),
+			left || 0,
+			top || 0,
+			width || 400,
+			height || 600
+		);
+	}
+	function loadData(data){
+		load(data);
+	}
+}
