@@ -18,7 +18,7 @@
 
 ## 自訂說明
 ### 選擇模組
-於 `/js/main.js` 找到 `Load Module`，在其下方有載入模組的清單，與檔案 `/module/*.js` 相應，依需求增減即可
+於 `/index.html` 找到 `<script src="module/`，依需求增減即可，亦可直接刪除相關檔案使瀏覽器載入失敗
 
 ### 伺服器設定
 需要伺服器的模組有
@@ -39,18 +39,30 @@
 於 `/module/sourceList.js` 中尋找 `ethercalc.org`，即可找到
 
 ## 程式架構
-- `g8v` 所有程式碼均於此變數之下
+### 變數
 - `g8v.bgLayer` 下個可用背景層編號
-- `g8v.createObj(module,args[,title,posX,posY,width,height])` 新增物件
-- `g8v.createWindow(obj,title,content[,option])` 新增一般視窗，option參數暫時無用
-- `g8v.loadModule(module[],onload])` 載入模組
-- `g8v.module.*.*` 模組 API
-- `g8v.module.*.load(args)` 從 url 載入的 API
-- `g8v.module.*.append(obj,args)` 從 url 載入的 API，針對現存功能再做附加功能操作
-- `g8v.module.*.loadData(data)` 等同從選項清單對模組操作
-- `g8v.objList` 當前物件列表
-- `g8v.updateShareUrl()` 刷新分享網址
+- `g8v.itemList` 當前物件列表，不包含附加物件
+- `g8v.topLayer` 下個可用頂層編號
+- `g8v.topZIndex` 下個視窗圖層
 - `g8v.windowOption[*](obj)` 視窗附帶功能
+
+### Class
+- `g8v.AppendItem` 附加物件基礎 Class
+- `g8v.ContentItem` 內容物件基礎 Class
+- `g8v.WindowItem` 視窗物件基礎 Class，繼承 `g8v.ContentItem`
+
+### Function
+- `g8v.addControlBottom(ele)` 新增控制項目至控制介面底部
+- `g8v.addControlTop(ele)` 新增控制項目至控制介面頂部
+- `g8v.loaded(modName)` 標注載入中的模組為載入完畢
+- `g8v.loading(modName)` 標注模組載入中
+- `g8v.module.set(*,{})` 定義模組 API
+- `g8v.module.get(*).*` 模組 API
+- `g8v.module.get(*).load(args)` 從 url 載入的 API
+- `g8v.module.get(*).append(item,args)` 從 url 載入的 API，針對現存功能再做附加功能操作
+- `g8v.module.get(*).loadData(data)` 等同從選項清單對模組操作
+- `g8v.onLoad(func)` 所有模組載入完畢後觸發的事件
+- `g8v.onLoad(modName,func)` 指定模組載入完畢後觸發的事件，標注不存在的模組則不會觸發
 
 ##調用函式庫清單
 - csvToArray (http://code.google.com/p/csv-to-array/)
