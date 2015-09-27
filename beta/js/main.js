@@ -674,8 +674,10 @@
 					}
 				}
 			}
-		}else
+		}else{
+			g8v.module.get('iframe').load('https://g0v.hackpad.com/ep/pad/static/JBDd9hvDt5f','使用說明',307,0,500,400);
 			updateShareUrl();
+		}
 	});
 	
 	function mountEvent(item){
