@@ -9,6 +9,7 @@
 		'load': load,
 		'loadData': loadData
 	});
+	g8v.onLoad('sourceList',() => g8v.module.get('sourceList').sourceIcon.set('iframe','ion-document-text'));
 	g8v.onLoad('g8v',function(){
 		let inputEle=$.tag('input',{'type':'input','name':'url','placeholder':'輸入目標頁面網址'});
 		let form=$.tag('form')

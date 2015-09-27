@@ -12,6 +12,7 @@
 		'load': load,
 		'loadData': loadData
 	});
+	g8v.onLoad('sourceList',() => g8v.module.get('sourceList').sourceIcon.set('video','ion-social-youtube'));
 	g8v.onLoad('g8v',() => {
 		let inputEle=$.tag('input',{'type':'input','name':'url','placeholder':'直播、串流網址...'});
 		let form=$.tag('form')

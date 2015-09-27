@@ -12,6 +12,7 @@
 		'load': load,
 		'loadData': loadData
 	});
+	g8v.onLoad('sourceList',() => g8v.module.get('sourceList').sourceIcon.set('chat','ion-ios-chatboxes'));
 	g8v.onLoad('g8v',() => {
 		let inputEle=$.tag('input',{'type':'input','name':'url','placeholder':'直播網址、IRC...'});
 		let form=$.tag('form')
