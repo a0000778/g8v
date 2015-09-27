@@ -659,7 +659,7 @@
 		updateShareUrl();
 	}
 	let updateShareUrl=function(){
-		let url=location.protocol+'//'+location.pathname+'#';
+		let url=location.protocol+'//'+location.host+location.pathname+'#';
 		let sp='';
 		for(let item of g8v.itemList){
 			url+=sp+item.module+'='+item.args.map(encodeURIComponent).join('|');
