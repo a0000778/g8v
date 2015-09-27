@@ -7,6 +7,11 @@
 	let sourceIcon=new Map();
 	
 	g8v.loading('sourceList');
+	document.head.$add('link',{
+		'type': 'text/css',
+		'rel': 'stylesheet',
+		'href': 'module/sourceList.css'
+	});
 	g8v.module.set('sourceList',{
 		'load': load,
 		'loadData': loadData,
@@ -39,7 +44,7 @@
 				'backgroundColor': '#FFF',
 				'width': '100%',
 				'height': '100%',
-				'paddingTop': '25px',
+				'paddingTop': '20px',
 				'overflowY': 'scroll'
 			}
 		});
@@ -62,12 +67,15 @@
 				if(!(mod && mod.loadData)) return r;
 				//簡化變數
 				let data=i[2];
-				let li=$.tag('li',{'textContent':i[0]});
+				let li=$.tag('li',{
+					'className': sourceIcon.has(i[1])? sourceIcon.get(i[1]):'ion-help-circled',
+					'textContent':i[0]
+				});
 				li.addEventListener('click',function(){
 					if(!mod.loadData(data)) alert('資料來源不被支援或格式有誤！');
 				});
 				return r.$add(li,null,true);
-			},$.tag('ul')));
+			},$.tag('ul',{'className': 'sourceList'})));
 		}).send();
 	}
 	function loadData(data){
