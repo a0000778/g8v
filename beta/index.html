@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+	<meta charset="utf-8">
+	<title>G8V.TV 電視牆</title>
+	<link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+	<link type="text/css" rel="stylesheet" href="plugin/openLayers.css">
+	<link type="text/css" rel="stylesheet" href="style.css">
+	<script src="js/common.js"></script>
+	<script src="js/VirtualWindow.js"></script>
+	<script src="plugin/csvToArray.js"></script>
+	<script src="plugin/openLayers.js"></script>
+	<!--Normal,Firefox will get error-->
+	<script src="js/main.js"></script>
+	<script src="module/opacity.js"></script>
+	<script src="module/bigScreen.js"></script>
+	<script src="module/video.js"></script>
+	<script src="module/chat.js"></script>
+	<script src="module/iframe.js"></script>
+	<script src="module/sourceList.js"></script>
+	<script src="module/bg.js"></script>
+	<!--for Firefox-->
+	<script src="js/main_firefox.js" type="text/javascript;version=1.7"></script>
+	<script src="module/opacity_firefox.js" type="text/javascript;version=1.7"></script>
+	<script src="module/bigScreen_firefox.js" type="text/javascript;version=1.7"></script>
+	<script src="module/video_firefox.js" type="text/javascript;version=1.7"></script>
+	<script src="module/chat_firefox.js" type="text/javascript;version=1.7"></script>
+	<script src="module/iframe_firefox.js" type="text/javascript;version=1.7"></script>
+	<script src="module/sourceList_firefox.js" type="text/javascript;version=1.7"></script>
+	<script src="module/bg_firefox.js" type="text/javascript;version=1.7"></script>
+</head>
+<body>
+	<div id="control">
+		<ul class="top">
+		</ul>
+		<ul class="bottom"></ul>
+	</div>
+	<div id="overflow_confirm" class="window">
+		<div class="vw_bar">修正視窗溢位</div>
+		<ul class="vw_option">
+			<li class="vw_hide ion-close-round" title="關閉視窗"></li>
+		</ul>
+		<div class="content">
+			<p>目前的畫面大小超出了瀏覽器視窗大小，請選擇處理方法以顯示完整的畫面。</p>
+			<select id="overflow_action">
+				<option value="resize">自動縮放</option>
+				<option value="move">自動搬移</option>
+				<option value="moveInDisplay" selected>移動到可視範圍</option>
+				<option value="notthing">不處理</option>
+			</select>
+			<button id="overflow_do">處理</button>
+			<p id="overflow_browser">當前瀏覽器過小，放大視窗可解決此問題</p>
+			<p>
+				自動縮放：等比例縮放直到符合瀏覽器視窗大小<br>
+				自動搬移：自動移動視窗至合適的空白區域<br>
+				移動到可視範圍：只移動超出瀏覽器的視窗至可視範圍內<br>
+				不處理：不做任何處理
+			</p>
+		</div>
+	</div>
+</body>
+</html>

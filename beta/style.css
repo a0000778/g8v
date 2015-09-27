@@ -1,0 +1,141 @@
+body{
+	background-color: #000;
+	font-size: 14px;
+	margin: 0px;
+	overflow: hidden;
+}
+input{
+	margin: 0px;
+}
+
+#control{
+	background-color: #333;
+	bottom: 0px;
+	color: #FFF;
+	left: 0px;
+	opacity: 0;
+	padding: 0px;
+	position: fixed;
+	top: 0px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	width: 42px;
+	z-index: 2000000000;
+}
+#control:hover, #control.hover{
+	opacity: 1;
+}
+#control ul{
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	width: 42px;
+}
+#control ul.bottom{
+	bottom: 0px;
+	position: absolute;
+}
+#control li{
+	font-size: 32px;
+    line-height: 32px;
+	padding: 0 5px;
+	position: relative;
+	text-align: center;
+}
+#control li:hover{
+	background-color: #666;
+}
+#control li>div,#control li>form{
+	background-color: #666;
+	box-sizing: border-box;
+	display: none;
+	font-size: 18px;
+	left: 42px;
+	position: absolute;
+	top: 0px;
+}
+#control li:hover>div,#control li:hover>form{
+	display: flex;
+}
+#control div>*,#control form>*{
+	margin: 5px;
+}
+#control button{
+	background-color: #666;
+	border: 0px;
+	color: #FFF;
+	cursor: pointer;
+	font-size: 32px;
+	line-height: 34px;
+	margin: 0px;
+	padding: 0 5px;
+	text-align: center;
+}
+#control button:active{
+	background-color: #999;
+}
+
+.window{
+	margin: 5px;
+}
+.window:hover,.window.hover{
+	margin: 0px;
+	border-image: linear-gradient(200deg, #959595 0%,#0d0d0d 46%,#010101 50%,#0a0a0a 53%,#4e4e4e 76%,#383838 87%,#1b1b1b 100%) 5;
+	border-style: solid;
+	border-width: 5px;
+}
+.window .content{
+	background-color: #CCC;
+	cursor: auto;
+	height: 100%;
+	overflow: hidden;
+}
+.window .vw_bar{
+	background-color: #DDD;
+	cursor: move;
+	display: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	z-index: 1;
+}
+.window:hover .vw_bar,.window.hover .vw_bar{
+	display: block;
+	left: 0px;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+}
+.window .vw_option{
+	display: none;
+	list-style: none;
+	margin: 0px;
+	padding: 0px;
+	position: absolute;
+	right: 0px;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	top: 0px;
+	z-index: 1;
+}
+.window .vw_option li{
+	cursor: pointer;
+	display: block;
+	float: right;
+	font-size: 18px;
+	height: 18px;
+	text-align: center;
+	vertical-align: middle;
+	width: 18px;
+}
+.window .vw_option .vw_close,.window .vw_option .vw_hide{
+	margin-left: 10px;
+}
+.window:hover .vw_option,.window.hover .vw_option{
+	display: block;
+}
