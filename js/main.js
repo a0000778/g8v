@@ -92,6 +92,29 @@
 	window.addEventListener('load',function(){
 		controlTop=document.querySelector('#control .top');
 		controlBottom=document.querySelector('#control .bottom');
+		let ctl=document.getElementById('control');
+		let focusEle=null;
+		ctl.addEventListener('focus',(e) => {
+			if(e.target.tagName.toLowerCase()==='input'){
+				focusEle=e.target;
+				let parentEle=e.target.parentNode;
+				do{
+					parentEle.classList.add('hover');
+					parentEle=parentEle.parentNode;
+				}while(parentEle!==ctl)
+				parentEle.classList.add('hover');
+			}
+		},true);
+		ctl.addEventListener('blur',() => {
+			if(focusEle===null) return;
+			let parentEle=focusEle.parentNode;
+			do{
+				parentEle.classList.remove('hover');
+				parentEle=parentEle.parentNode;
+			}while(parentEle!==ctl)
+			parentEle.classList.remove('hover');
+			focusEle=null;
+		},true);
 		g8v.loaded('g8v');
 	});
 
