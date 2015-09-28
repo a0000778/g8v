@@ -44,7 +44,7 @@ input{
 	position: relative;
 	text-align: center;
 }
-#control li:hover{
+#control li:hover, #control li.hover{
 	background-color: #666;
 }
 #control li>div,#control li>form{
@@ -56,7 +56,7 @@ input{
 	position: absolute;
 	top: 0px;
 }
-#control li:hover>div,#control li:hover>form{
+#control li:hover>div,#control li:hover>form, #control li.hover>div,#control li.hover>form{
 	display: flex;
 }
 #control div>*,#control form>*{
