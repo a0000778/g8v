@@ -29,7 +29,7 @@
 			content,
 			left? left:0,
 			top? top:0,
-			width? width:800,
+			width? width:400,
 			height? height:600
 		);
 		return item;
