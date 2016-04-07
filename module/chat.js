@@ -17,7 +17,7 @@
 				var data=url.match(/^(https?:\/\/livehouse\.in\/)?channel\/([a-zA-Z0-9_-]+)/);
 				if(!data || !(data[1] || unCheckDomain)) return false;
 				return $.tag('iframe',{
-					'src': 'https://livehouse.in/embed/channel/'+data[2],
+					'src': 'https://livehouse.in/channel/'+data[2]+'/chatroom',
 					'allowfullscreen': 'true',
 					'style': {
 						'width': '100%',
