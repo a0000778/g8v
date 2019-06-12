@@ -356,7 +356,7 @@ addEventListener('load',function(){
 				}
 			},g8v);
 			if(!g8v.objList.length)
-				g8v.module.iframe.load('https://g0v.hackpad.com/ep/pad/static/JBDd9hvDt5f','使用說明',307,0,500,400);
+				g8v.module.iframe.load('https://g0v.hackpad.tw/ep/pad/static/JBDd9hvDt5f','使用說明',307,0,500,400);
 			g8v.fixOverflow();
 		};
 	})());
